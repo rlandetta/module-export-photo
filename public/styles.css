@@ -1,4 +1,5 @@
 :root {
+<<<<<<< ours
   color-scheme: light dark;
   --bg: #0f172a;
   --bg-muted: #111827;
@@ -10,6 +11,20 @@
   --accent-strong: #0ea5e9;
   --danger: #f87171;
   --border: rgba(148, 163, 184, 0.12);
+=======
+  color-scheme: only light;
+  --bg: #f5f7fb;
+  --surface: #ffffff;
+  --surface-strong: #edf1fb;
+  --surface-muted: #eef3ff;
+  --border: #d6ddf2;
+  --text: #1b1d29;
+  --text-muted: #5c637e;
+  --accent: #3b6ef5;
+  --accent-soft: rgba(59, 110, 245, 0.1);
+  --danger: #d23c3c;
+  --danger-soft: rgba(210, 60, 60, 0.12);
+>>>>>>> theirs
   font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
 }
 
@@ -20,23 +35,38 @@
 body {
   margin: 0;
   min-height: 100vh;
+<<<<<<< ours
   background: linear-gradient(120deg, #0b1120, #111c3d 55%, #0b1120 100%);
+=======
+  background: radial-gradient(circle at top right, rgba(59, 110, 245, 0.15), transparent 45%),
+    linear-gradient(180deg, #f8faff 0%, #f1f4ff 100%);
+>>>>>>> theirs
   color: var(--text);
 }
 
 main {
   display: grid;
+<<<<<<< ours
   grid-template-columns: 1.2fr 1fr;
   gap: 1.5rem;
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem 2.5rem 3rem;
+=======
+  grid-template-columns: 320px minmax(340px, 1fr) 420px;
+  gap: 1.75rem;
+  max-width: 1380px;
+  margin: 0 auto;
+  padding: 2.5rem 2.75rem 3rem;
+  align-items: start;
+>>>>>>> theirs
 }
 
 header {
   grid-column: 1 / -1;
   display: flex;
   justify-content: space-between;
+<<<<<<< ours
   align-items: center;
   padding-bottom: 0.5rem;
 }
@@ -44,6 +74,16 @@ header {
 header h1 {
   font-size: 2rem;
   margin: 0;
+=======
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+header h1 {
+  font-size: 2.1rem;
+  margin: 0;
+  color: #16182b;
+>>>>>>> theirs
 }
 
 header .auth-actions {
@@ -53,6 +93,7 @@ header .auth-actions {
 }
 
 .module {
+<<<<<<< ours
   background: rgba(15, 23, 42, 0.75);
   border: 1px solid rgba(148, 163, 184, 0.12);
   border-radius: 18px;
@@ -62,16 +103,57 @@ header .auth-actions {
   flex-direction: column;
   gap: 1.25rem;
   box-shadow: 0 30px 80px rgba(15, 23, 42, 0.65);
+=======
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 1.75rem;
+  box-shadow: 0 25px 60px rgba(25, 40, 122, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.module-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+>>>>>>> theirs
 }
 
 .module h2 {
   margin: 0;
+<<<<<<< ours
   font-size: 1.25rem;
+=======
+  font-size: 1.35rem;
+  color: #11152d;
+>>>>>>> theirs
 }
 
 .module p.description {
   margin: 0;
+<<<<<<< ours
   color: rgba(226, 232, 240, 0.65);
+=======
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+#upload-module {
+  grid-column: 1 / 2;
+}
+
+#editor-module {
+  grid-column: 2 / 3;
+}
+
+#preview-module {
+  grid-column: 3 / 4;
+  position: sticky;
+  top: 6.5rem;
+  align-self: start;
+>>>>>>> theirs
 }
 
 .upload-grid {
@@ -79,6 +161,7 @@ header .auth-actions {
   gap: 1rem;
 }
 
+<<<<<<< ours
 .file-input {
   position: relative;
   border: 2px dashed rgba(148, 163, 184, 0.4);
@@ -96,17 +179,75 @@ header .auth-actions {
 }
 
 .file-input input[type="file"] {
+=======
+.drop-zone {
+  position: relative;
+  border: 2px dashed rgba(59, 110, 245, 0.2);
+  border-radius: 18px;
+  padding: 2.25rem 1.75rem;
+  text-align: center;
+  transition: border 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  background: var(--surface-strong);
+}
+
+.drop-zone.is-dragover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  box-shadow: 0 20px 40px rgba(59, 110, 245, 0.12);
+}
+
+.drop-zone input[type="file"] {
+>>>>>>> theirs
   position: absolute;
   inset: 0;
   opacity: 0;
   cursor: pointer;
 }
 
+<<<<<<< ours
 .image-list {
   display: flex;
   flex-direction: column;
   gap: 1rem;
   max-height: 360px;
+=======
+.drop-zone__content {
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.drop-zone__icon {
+  font-size: 2.1rem;
+}
+
+.drop-zone__title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0;
+  color: #11152d;
+}
+
+.drop-zone__subtitle {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.drop-zone__hint {
+  margin: 0;
+  color: rgba(27, 29, 41, 0.55);
+  font-size: 0.8rem;
+}
+
+.image-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  max-height: 420px;
+>>>>>>> theirs
   overflow: auto;
   padding-right: 0.25rem;
 }
@@ -116,10 +257,24 @@ header .auth-actions {
   grid-template-columns: auto 1fr auto;
   gap: 1rem;
   align-items: center;
+<<<<<<< ours
   padding: 0.85rem 1rem;
   background: rgba(15, 23, 42, 0.7);
   border-radius: 16px;
   border: 1px solid rgba(148, 163, 184, 0.12);
+=======
+  padding: 1rem 1.1rem;
+  background: var(--surface-muted);
+  border-radius: 16px;
+  border: 1px solid transparent;
+  transition: border 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+.image-card.active {
+  border-color: var(--accent);
+  box-shadow: 0 12px 24px rgba(59, 110, 245, 0.12);
+  transform: translateY(-2px);
+>>>>>>> theirs
 }
 
 .image-card img {
@@ -134,10 +289,19 @@ header .auth-actions {
   flex-direction: column;
   gap: 0.35rem;
   font-size: 0.9rem;
+<<<<<<< ours
 }
 
 .image-card .info strong {
   font-size: 0.95rem;
+=======
+  color: var(--text-muted);
+}
+
+.image-card .info strong {
+  font-size: 0.96rem;
+  color: var(--text);
+>>>>>>> theirs
 }
 
 .image-card .actions {
@@ -151,6 +315,7 @@ button,
 .button {
   font: inherit;
   border: none;
+<<<<<<< ours
   border-radius: 999px;
   padding: 0.55rem 1.25rem;
   cursor: pointer;
@@ -161,11 +326,25 @@ button,
   align-items: center;
   gap: 0.35rem;
   transition: transform 0.15s ease, box-shadow 0.2s ease;
+=======
+  border-radius: 12px;
+  padding: 0.6rem 1.15rem;
+  cursor: pointer;
+  background: var(--accent);
+  color: #ffffff;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
+>>>>>>> theirs
 }
 
 button:hover,
 .button:hover {
   transform: translateY(-1px);
+<<<<<<< ours
   box-shadow: 0 16px 30px rgba(14, 165, 233, 0.35);
 }
 
@@ -177,6 +356,24 @@ button.secondary {
 button.danger {
   background: rgba(248, 113, 113, 0.25);
   color: #fecaca;
+=======
+  box-shadow: 0 18px 32px rgba(59, 110, 245, 0.25);
+}
+
+button.secondary {
+  background: rgba(59, 110, 245, 0.1);
+  color: var(--accent);
+}
+
+button.secondary:hover {
+  box-shadow: none;
+  filter: brightness(0.95);
+}
+
+button.danger {
+  background: var(--danger-soft);
+  color: var(--danger);
+>>>>>>> theirs
 }
 
 input[type="text"],
@@ -186,11 +383,19 @@ select {
   width: 100%;
   padding: 0.65rem 0.8rem;
   border-radius: 12px;
+<<<<<<< ours
   border: 1px solid rgba(148, 163, 184, 0.25);
   background: rgba(15, 23, 42, 0.7);
   color: var(--text);
   font: inherit;
   transition: border 0.2s ease, background 0.2s ease;
+=======
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--text);
+  font: inherit;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+>>>>>>> theirs
 }
 
 textarea {
@@ -203,15 +408,25 @@ textarea:focus,
 select:focus {
   outline: none;
   border-color: var(--accent);
+<<<<<<< ours
   background: rgba(14, 165, 233, 0.12);
+=======
+  box-shadow: 0 0 0 4px var(--accent-soft);
+>>>>>>> theirs
 }
 
 label span {
   display: block;
   margin-bottom: 0.35rem;
+<<<<<<< ours
   font-size: 0.85rem;
   color: rgba(203, 213, 225, 0.85);
   letter-spacing: 0.02em;
+=======
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  letter-spacing: 0.03em;
+>>>>>>> theirs
   text-transform: uppercase;
 }
 
@@ -220,15 +435,25 @@ label span {
   align-items: center;
   gap: 0.5rem;
   font-size: 0.9rem;
+<<<<<<< ours
   color: rgba(226, 232, 240, 0.75);
+=======
+  color: var(--text-muted);
+>>>>>>> theirs
 }
 
 .preview-grid {
   display: flex;
   flex-direction: column;
+<<<<<<< ours
   gap: 1.25rem;
   overflow: auto;
   max-height: 720px;
+=======
+  gap: 1.2rem;
+  overflow: auto;
+  max-height: calc(100vh - 280px);
+>>>>>>> theirs
   padding-right: 0.5rem;
 }
 
@@ -236,11 +461,19 @@ label span {
   display: grid;
   grid-template-columns: 140px 1fr;
   gap: 1.25rem;
+<<<<<<< ours
   padding: 1rem;
   background: rgba(15, 23, 42, 0.6);
   border: 1px solid rgba(148, 163, 184, 0.15);
   border-radius: 18px;
   box-shadow: 0 25px 60px rgba(15, 23, 42, 0.6);
+=======
+  padding: 1.1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: 0 20px 40px rgba(27, 36, 84, 0.08);
+>>>>>>> theirs
 }
 
 .preview-card img {
@@ -258,28 +491,47 @@ label span {
 
 .preview-card h3 {
   margin: 0;
+<<<<<<< ours
   font-size: 1rem;
   color: rgba(248, 250, 252, 0.9);
+=======
+  font-size: 1.05rem;
+  color: var(--text);
+>>>>>>> theirs
 }
 
 .preview-card p {
   margin: 0;
   line-height: 1.5;
+<<<<<<< ours
   color: rgba(226, 232, 240, 0.85);
+=======
+  color: var(--text-muted);
+>>>>>>> theirs
   white-space: pre-wrap;
 }
 
 .status {
   padding: 0.75rem 1rem;
   border-radius: 12px;
+<<<<<<< ours
   background: rgba(56, 189, 248, 0.12);
   color: rgba(125, 211, 252, 1);
+=======
+  background: var(--accent-soft);
+  color: var(--accent);
+>>>>>>> theirs
   font-size: 0.9rem;
 }
 
 .status.error {
+<<<<<<< ours
   background: rgba(248, 113, 113, 0.15);
   color: #fecaca;
+=======
+  background: var(--danger-soft);
+  color: var(--danger);
+>>>>>>> theirs
 }
 
 .actions-row {
@@ -295,19 +547,38 @@ label span {
   gap: 0.4rem;
   font-size: 0.8rem;
   border-radius: 999px;
+<<<<<<< ours
   padding: 0.3rem 0.75rem;
   background: rgba(148, 163, 184, 0.2);
   color: rgba(226, 232, 240, 0.9);
+=======
+  padding: 0.35rem 0.8rem;
+  background: rgba(59, 110, 245, 0.12);
+  color: var(--accent);
+>>>>>>> theirs
 }
 
 .auth-state {
   font-size: 0.85rem;
+<<<<<<< ours
   color: rgba(226, 232, 240, 0.72);
+=======
+  color: var(--text-muted);
+>>>>>>> theirs
 }
 
 @media (max-width: 1100px) {
   main {
+<<<<<<< ours
     grid-template-columns: 1fr;
+=======
+    grid-template-columns: repeat(2, minmax(280px, 1fr));
+  }
+
+  #preview-module {
+    grid-column: 1 / -1;
+    position: static;
+>>>>>>> theirs
   }
 
   .preview-card {
@@ -316,12 +587,18 @@ label span {
 }
 
 @media (max-width: 720px) {
+<<<<<<< ours
   body {
     background: #0f172a;
   }
 
   main {
     padding: 1.5rem;
+=======
+  main {
+    padding: 1.5rem;
+    grid-template-columns: 1fr;
+>>>>>>> theirs
   }
 
   header {

@@ -1,4 +1,5 @@
 <<<<<<< ours
+<<<<<<< ours
 # Módulo de carga, edición de caption y exportación de imágenes
 
 Este proyecto proporciona un módulo listo para usarse que permite:
@@ -24,6 +25,8 @@ Este proyecto proporciona un módulo listo para usarse que permite:
 
 > No se requieren dependencias ni procesos de compilación: todo funciona con HTML, CSS y JavaScript puro.
 =======
+=======
+>>>>>>> theirs
 # Módulo de exportación fotográfica
 
 Aplicación de escritorio web que permite a fotógrafos y editores preparar coberturas para agencias. Incluye tres módulos principales:
@@ -83,11 +86,15 @@ La interfaz replica el flujo mostrado en las capturas de referencia y entrega un
 - `npm run dev` – inicia el servidor con reinicios automáticos (`nodemon`).
 - `npm start` – levanta el servidor en modo producción.
 - `npm test` – placeholder sin pruebas configuradas.
+<<<<<<< ours
+>>>>>>> theirs
+=======
 >>>>>>> theirs
 
 ## Estructura del proyecto
 
 ```
+<<<<<<< ours
 <<<<<<< ours
 ├── app.js          # Lógica del módulo: carga, previsualización y exportación
 ├── index.html      # Marcado principal de la interfaz
@@ -105,6 +112,8 @@ La interfaz replica el flujo mostrado en las capturas de referencia y entrega un
 
 Este módulo se ofrece "tal cual" para que puedas incorporarlo a tus propios flujos de trabajo. Ajusta y redistribuye según tus requerimientos.
 =======
+=======
+>>>>>>> theirs
 public/        # Interfaz web (HTML, CSS y JS)
 server/        # Servidor Express con integración Google Drive
 .env.example   # Variables de entorno requeridas
@@ -123,4 +132,7 @@ server/        # Servidor Express con integración Google Drive
 ## Licencia
 
 Este proyecto se entrega sin licencia explícita. Ajusta los términos según tus necesidades antes de distribuirlo.
+<<<<<<< ours
+>>>>>>> theirs
+=======
 >>>>>>> theirs

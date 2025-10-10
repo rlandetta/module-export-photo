@@ -15,6 +15,10 @@ const state = {
 
 const dom = {
   fileInput: document.querySelector('#file-input'),
+<<<<<<< ours
+=======
+  dropZone: document.querySelector('#drop-zone'),
+>>>>>>> theirs
   imageList: document.querySelector('#image-list'),
   imageTemplate: document.querySelector('#image-card-template'),
   previewTemplate: document.querySelector('#preview-card-template'),
@@ -164,6 +168,11 @@ function refreshImageList() {
 
     if (state.activeImageId === image.id) {
       article.classList.add('active');
+<<<<<<< ours
+=======
+    } else {
+      article.classList.remove('active');
+>>>>>>> theirs
     }
 
     dom.imageList.appendChild(node);
@@ -219,10 +228,30 @@ function handleGlobalChange() {
   updateEditor();
 }
 
+<<<<<<< ours
 async function addFiles(files) {
   const list = Array.from(files);
   if (!list.length) return;
   await Promise.all(list.map(async (file) => {
+=======
+function isSupportedImage(file) {
+  if (file.type && file.type.startsWith('image/')) return true;
+  const extension = file.name.split('.').pop()?.toLowerCase();
+  const allowed = ['jpg', 'jpeg', 'png', 'heic', 'raw', 'nef', 'cr2', 'arw', 'dng'];
+  return extension ? allowed.includes(extension) : false;
+}
+
+async function addFiles(files) {
+  const list = Array.from(files);
+  if (!list.length) return;
+  let skipped = 0;
+  const previousCount = state.images.length;
+  await Promise.all(list.map(async (file) => {
+    if (!isSupportedImage(file)) {
+      skipped += 1;
+      return;
+    }
+>>>>>>> theirs
     const previewUrl = URL.createObjectURL(file);
     const id = (window.crypto && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2, 10));
     const image = {
@@ -242,6 +271,25 @@ async function addFiles(files) {
   if (!state.activeImageId && state.images.length) {
     setActiveImage(state.images[0].id);
   }
+<<<<<<< ours
+=======
+  const added = state.images.length - previousCount;
+  if (skipped && !added) {
+    setStatus(`Se omitieron ${skipped} archivo${skipped === 1 ? '' : 's'} que no son compatibles.`, 'error');
+    return;
+  }
+  if (skipped && added) {
+    setStatus(
+      `${added === 1 ? '1 imagen agregada' : `${added} imágenes agregadas`} correctamente. ` +
+        `Se omitieron ${skipped} archivo${skipped === 1 ? '' : 's'} que no son compatibles.`,
+      'error'
+    );
+    return;
+  }
+  if (added) {
+    setStatus(`${added === 1 ? 'Imagen agregada' : `${added} imágenes agregadas`} correctamente.`);
+  }
+>>>>>>> theirs
 }
 
 async function readAsDataURL(file) {
@@ -480,6 +528,58 @@ function registerFileInput() {
   });
 }
 
+<<<<<<< ours
+=======
+function registerDropZone() {
+  if (!dom.dropZone) return;
+
+  const preventDefaults = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach((eventName) => {
+    dom.dropZone.addEventListener(eventName, preventDefaults);
+  });
+
+  ['dragenter', 'dragover'].forEach((eventName) => {
+    dom.dropZone.addEventListener(eventName, () => {
+      dom.dropZone.classList.add('is-dragover');
+    });
+  });
+
+  ['dragleave', 'drop'].forEach((eventName) => {
+    dom.dropZone.addEventListener(eventName, () => {
+      dom.dropZone.classList.remove('is-dragover');
+    });
+  });
+
+  dom.dropZone.addEventListener('drop', (event) => {
+    const { files } = event.dataTransfer || {};
+    if (files?.length) {
+      addFiles(files);
+    }
+  });
+
+  dom.dropZone.addEventListener('click', () => {
+    dom.fileInput.click();
+  });
+
+  dom.dropZone.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      dom.fileInput.click();
+    }
+  });
+
+  ['dragover', 'drop'].forEach((eventName) => {
+    document.addEventListener(eventName, (event) => {
+      event.preventDefault();
+    });
+  });
+}
+
+>>>>>>> theirs
 async function checkAuthStatus() {
   try {
     const response = await fetch('/api/oauth-status', { credentials: 'include' });
@@ -545,6 +645,10 @@ function init() {
   registerGlobalListeners();
   registerEditorListeners();
   registerFileInput();
+<<<<<<< ours
+=======
+  registerDropZone();
+>>>>>>> theirs
   registerPreviewDownload();
   registerExportButton();
   registerAuthButtons();

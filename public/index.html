@@ -21,6 +21,7 @@
       </header>
 
       <section class="module" id="upload-module">
+<<<<<<< ours
         <div>
           <h2>Cargar imágenes</h2>
           <p class="description">Agrega las fotografías de la cobertura y elige cuáles exportar.</p>
@@ -30,11 +31,30 @@
           <p>Puedes arrastrar y soltar o buscar en tu computadora.</p>
           <input id="file-input" type="file" accept="image/*" multiple />
         </label>
+=======
+        <div class="module-header">
+          <h2>Cargar imágenes</h2>
+          <p class="description">Agrega las fotografías de la cobertura y elige cuáles exportar.</p>
+        </div>
+        <div id="drop-zone" class="drop-zone" tabindex="0" role="button" aria-label="Arrastra y suelta tus imágenes o haz clic para seleccionarlas">
+          <input id="file-input" type="file" accept="image/*" multiple />
+          <div class="drop-zone__content">
+            <div class="drop-zone__icon" aria-hidden="true">📷</div>
+            <p class="drop-zone__title">Arrastra tus imágenes aquí</p>
+            <p class="drop-zone__subtitle">o haz clic para seleccionarlas desde tu equipo</p>
+            <p class="drop-zone__hint">JPG, PNG o RAW · hasta 25&nbsp;MB por archivo</p>
+          </div>
+        </div>
+>>>>>>> theirs
         <div id="image-list" class="image-list" aria-live="polite"></div>
       </section>
 
       <section class="module" id="editor-module">
+<<<<<<< ours
         <div>
+=======
+        <div class="module-header">
+>>>>>>> theirs
           <h2>Editor</h2>
           <p class="description">Completa los datos editoriales y personaliza cada caption.</p>
         </div>
@@ -91,8 +111,13 @@
       </section>
 
       <section class="module" id="preview-module">
+<<<<<<< ours
         <div>
           <h2>Preview</h2>
+=======
+        <div class="module-header">
+          <h2>Vista previa</h2>
+>>>>>>> theirs
           <p class="description">Revisa el documento antes de exportar. Las miniaturas se generarán automáticamente.</p>
         </div>
         <div id="status" class="status" hidden></div>
