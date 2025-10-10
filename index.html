@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Módulo de exportación de fotos</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="container">
+        <p class="app-kicker">Módulo de exportación — Preview</p>
+        <h1>Monta, edita y exporta captions sobre tus fotografías</h1>
+        <p>
+          Distribuye tu flujo de trabajo en tres columnas: carga la imagen,
+          ajusta el caption y revisa la composición final antes de descargarla en
+          PNG.
+        </p>
+      </div>
+    </header>
+
+    <main class="container app-shell" aria-label="Editor de exportación de imágenes">
+      <section class="panel panel--upload" aria-labelledby="upload-title">
+        <div class="panel__header">
+          <h2 id="upload-title">1. Cargar imágenes</h2>
+          <p>Arrastra archivos o selecciona desde tu dispositivo.</p>
+        </div>
+        <div class="drop-zone" id="drop-zone">
+          <input
+            type="file"
+            id="image-input"
+            accept="image/*"
+            aria-label="Selecciona una imagen"
+          />
+          <div class="drop-zone__message">
+            <strong>Arrastra y suelta</strong> tu imagen aquí o haz clic para
+            explorar archivos compatibles (JPG, PNG, GIF, WEBP).
+          </div>
+        </div>
+
+        <div class="file-summary">
+          <div class="file-summary__header">
+            <h3>Archivos cargados</h3>
+            <span id="file-counter" class="file-summary__count" aria-live="polite">0 archivos</span>
+          </div>
+          <ul id="file-list" class="file-list" aria-live="polite" aria-relevant="additions removals">
+            <li id="file-placeholder" class="file-list__empty">
+              Aún no has cargado ninguna imagen.
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="panel panel--editor" aria-labelledby="editor-title">
+        <div class="panel__header">
+          <h2 id="editor-title">2. Editor</h2>
+          <p>
+            Define el texto y los parámetros visuales que se superponen a la
+            fotografía seleccionada.
+          </p>
+        </div>
+
+        <div class="editor-section">
+          <h3 class="editor-section__title">Contenido</h3>
+          <div class="field-stack">
+            <label class="field">
+              <span class="field__label">Caption (texto de la foto)</span>
+              <textarea
+                id="caption-input"
+                rows="4"
+                placeholder="Describe el contexto de la imagen, cita testimonios o añade detalles relevantes."
+              ></textarea>
+            </label>
+          </div>
+        </div>
+
+        <div class="editor-section">
+          <h3 class="editor-section__title">Tipografía y color</h3>
+          <div class="field-grid">
+            <label class="field">
+              <span class="field__label">Tipografía</span>
+              <select id="font-family">
+                <option value="'Inter', sans-serif">Inter</option>
+                <option value="'Playfair Display', serif">Playfair Display</option>
+                <option value="'Arial', sans-serif">Arial</option>
+                <option value="'Times New Roman', serif">Times New Roman</option>
+                <option value="'Courier New', monospace">Courier New</option>
+              </select>
+            </label>
+
+            <label class="field field--range">
+              <div class="field__header">
+                <span class="field__label">Tamaño de fuente</span>
+                <output id="font-size-output" for="font-size">32 px</output>
+              </div>
+              <input type="range" id="font-size" min="12" max="72" value="32" />
+            </label>
+
+            <label class="field">
+              <span class="field__label">Color del texto</span>
+              <input type="color" id="text-color" value="#ffffff" />
+            </label>
+
+            <label class="field">
+              <span class="field__label">Color de fondo del caption</span>
+              <input type="color" id="background-color" value="#1f2937" />
+            </label>
+
+            <label class="field field--range">
+              <div class="field__header">
+                <span class="field__label">Opacidad del fondo</span>
+                <output id="background-opacity-output" for="background-opacity">70%</output>
+              </div>
+              <input
+                type="range"
+                id="background-opacity"
+                min="0"
+                max="100"
+                value="70"
+              />
+            </label>
+          </div>
+        </div>
+
+        <div class="editor-section">
+          <h3 class="editor-section__title">Distribución</h3>
+          <div class="field-grid field-grid--compact">
+            <label class="field">
+              <span class="field__label">Posición vertical</span>
+              <select id="vertical-position">
+                <option value="bottom">Inferior</option>
+                <option value="middle">Centro</option>
+                <option value="top">Superior</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span class="field__label">Alineación horizontal</span>
+              <select id="horizontal-position">
+                <option value="center">Centro</option>
+                <option value="left">Izquierda</option>
+                <option value="right">Derecha</option>
+              </select>
+            </label>
+
+            <label class="field field--range">
+              <div class="field__header">
+                <span class="field__label">Margen interno</span>
+                <output id="padding-output" for="padding">16 px</output>
+              </div>
+              <input type="range" id="padding" min="4" max="64" value="16" />
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel panel--preview" aria-labelledby="preview-title">
+        <div class="panel__header">
+          <h2 id="preview-title">3. Vista previa</h2>
+          <p>Revisa la composición final antes de exportar.</p>
+        </div>
+
+        <div class="preview-card">
+          <div class="preview-stage" id="preview-stage">
+            <img id="preview-image" alt="Vista previa de la imagen" hidden />
+            <div
+              class="caption-layer"
+              id="caption-preview"
+              data-vertical="bottom"
+              data-horizontal="center"
+            >
+              <span id="caption-text"></span>
+            </div>
+            <p class="empty-preview" id="empty-preview">
+              Carga una imagen para activar la vista previa interactiva.
+            </p>
+          </div>
+        </div>
+
+        <div class="export-actions">
+          <button class="primary" id="export-button" type="button" disabled>
+            Exportar imagen
+          </button>
+          <button class="ghost" id="preview-button" type="button" disabled>
+            Vista previa en nueva pestaña
+          </button>
+          <a id="download-link" class="download-link" download hidden>
+            Descargar imagen exportada
+          </a>
+          <p class="export-feedback" id="export-feedback" role="status"></p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <div class="container">
+        <p>
+          Diseñado como módulo reutilizable para redacciones y equipos que
+          necesitan preparar assets editoriales con captions consistentes.
+        </p>
+      </div>
+    </footer>
+
+    <script src="app.js" type="module"></script>
+  </body>
+</html>
