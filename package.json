@@ -6,7 +6,12 @@
   "scripts": {
     "dev": "nodemon server/index.js",
     "start": "node server/index.js",
+<<<<<<< ours
     "test": "echo \"No tests configured\""
+=======
+    "test": "echo \"No tests configured\"",
+    "bundle:preview": "node scripts/build_preview.mjs"
+>>>>>>> theirs
   },
   "keywords": [],
   "author": "",
@@ -21,6 +26,10 @@
     "sharp": "^0.34.4"
   },
   "devDependencies": {
+<<<<<<< ours
+=======
+    "archiver": "^6.0.2",
+>>>>>>> theirs
     "nodemon": "^3.1.10"
   }
 }

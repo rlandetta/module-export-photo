@@ -1,6 +1,7 @@
 :root {
 <<<<<<< ours
 <<<<<<< ours
+<<<<<<< ours
   color-scheme: light dark;
   --bg: #0f172a;
   --bg-muted: #111827;
@@ -13,6 +14,8 @@
   --danger: #f87171;
   --border: rgba(148, 163, 184, 0.12);
 =======
+=======
+>>>>>>> theirs
 =======
 >>>>>>> theirs
   color-scheme: only light;
@@ -28,6 +31,9 @@
   --danger: #d23c3c;
   --danger-soft: rgba(210, 60, 60, 0.12);
 <<<<<<< ours
+<<<<<<< ours
+>>>>>>> theirs
+=======
 >>>>>>> theirs
 =======
 >>>>>>> theirs
@@ -43,7 +49,12 @@ body {
   min-height: 100vh;
 <<<<<<< ours
 <<<<<<< ours
+<<<<<<< ours
   background: linear-gradient(120deg, #0b1120, #111c3d 55%, #0b1120 100%);
+=======
+  background: radial-gradient(circle at top right, rgba(59, 110, 245, 0.15), transparent 45%),
+    linear-gradient(180deg, #f8faff 0%, #f1f4ff 100%);
+>>>>>>> theirs
 =======
   background: radial-gradient(circle at top right, rgba(59, 110, 245, 0.15), transparent 45%),
     linear-gradient(180deg, #f8faff 0%, #f1f4ff 100%);
@@ -59,12 +70,15 @@ main {
   display: grid;
 <<<<<<< ours
 <<<<<<< ours
+<<<<<<< ours
   grid-template-columns: 1.2fr 1fr;
   gap: 1.5rem;
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem 2.5rem 3rem;
 =======
+=======
+>>>>>>> theirs
 =======
 >>>>>>> theirs
   grid-template-columns: 320px minmax(340px, 1fr) 420px;
@@ -74,6 +88,9 @@ main {
   padding: 2.5rem 2.75rem 3rem;
   align-items: start;
 <<<<<<< ours
+<<<<<<< ours
+>>>>>>> theirs
+=======
 >>>>>>> theirs
 =======
 >>>>>>> theirs
@@ -83,6 +100,7 @@ header {
   grid-column: 1 / -1;
   display: flex;
   justify-content: space-between;
+<<<<<<< ours
 <<<<<<< ours
 <<<<<<< ours
   align-items: center;
@@ -95,6 +113,8 @@ header h1 {
 =======
 =======
 >>>>>>> theirs
+=======
+>>>>>>> theirs
   align-items: flex-start;
   gap: 1rem;
 }
@@ -104,6 +124,9 @@ header h1 {
   margin: 0;
   color: #16182b;
 <<<<<<< ours
+<<<<<<< ours
+>>>>>>> theirs
+=======
 >>>>>>> theirs
 =======
 >>>>>>> theirs
@@ -118,6 +141,7 @@ header .auth-actions {
 .module {
 <<<<<<< ours
 <<<<<<< ours
+<<<<<<< ours
   background: rgba(15, 23, 42, 0.75);
   border: 1px solid rgba(148, 163, 184, 0.12);
   border-radius: 18px;
@@ -128,6 +152,8 @@ header .auth-actions {
   gap: 1.25rem;
   box-shadow: 0 30px 80px rgba(15, 23, 42, 0.65);
 =======
+=======
+>>>>>>> theirs
 =======
 >>>>>>> theirs
   background: var(--surface);
@@ -145,6 +171,9 @@ header .auth-actions {
   flex-direction: column;
   gap: 0.4rem;
 <<<<<<< ours
+<<<<<<< ours
+>>>>>>> theirs
+=======
 >>>>>>> theirs
 =======
 >>>>>>> theirs
@@ -154,7 +183,12 @@ header .auth-actions {
   margin: 0;
 <<<<<<< ours
 <<<<<<< ours
+<<<<<<< ours
   font-size: 1.25rem;
+=======
+  font-size: 1.35rem;
+  color: #11152d;
+>>>>>>> theirs
 =======
   font-size: 1.35rem;
   color: #11152d;
@@ -169,8 +203,11 @@ header .auth-actions {
   margin: 0;
 <<<<<<< ours
 <<<<<<< ours
+<<<<<<< ours
   color: rgba(226, 232, 240, 0.65);
 =======
+=======
+>>>>>>> theirs
 =======
 >>>>>>> theirs
   color: var(--text-muted);
@@ -191,6 +228,9 @@ header .auth-actions {
   top: 6.5rem;
   align-self: start;
 <<<<<<< ours
+<<<<<<< ours
+>>>>>>> theirs
+=======
 >>>>>>> theirs
 =======
 >>>>>>> theirs
@@ -201,6 +241,7 @@ header .auth-actions {
   gap: 1rem;
 }
 
+<<<<<<< ours
 <<<<<<< ours
 <<<<<<< ours
 .file-input {
@@ -223,6 +264,8 @@ header .auth-actions {
 =======
 =======
 >>>>>>> theirs
+=======
+>>>>>>> theirs
 .drop-zone {
   position: relative;
   border: 2px dashed rgba(59, 110, 245, 0.2);
@@ -242,6 +285,9 @@ header .auth-actions {
 
 .drop-zone input[type="file"] {
 <<<<<<< ours
+<<<<<<< ours
+>>>>>>> theirs
+=======
 >>>>>>> theirs
 =======
 >>>>>>> theirs
@@ -253,12 +299,15 @@ header .auth-actions {
 
 <<<<<<< ours
 <<<<<<< ours
+<<<<<<< ours
 .image-list {
   display: flex;
   flex-direction: column;
   gap: 1rem;
   max-height: 360px;
 =======
+=======
+>>>>>>> theirs
 =======
 >>>>>>> theirs
 .drop-zone__content {
@@ -297,6 +346,9 @@ header .auth-actions {
   gap: 0.9rem;
   max-height: 420px;
 <<<<<<< ours
+<<<<<<< ours
+>>>>>>> theirs
+=======
 >>>>>>> theirs
 =======
 >>>>>>> theirs
@@ -311,11 +363,14 @@ header .auth-actions {
   align-items: center;
 <<<<<<< ours
 <<<<<<< ours
+<<<<<<< ours
   padding: 0.85rem 1rem;
   background: rgba(15, 23, 42, 0.7);
   border-radius: 16px;
   border: 1px solid rgba(148, 163, 184, 0.12);
 =======
+=======
+>>>>>>> theirs
 =======
 >>>>>>> theirs
   padding: 1rem 1.1rem;
@@ -330,6 +385,9 @@ header .auth-actions {
   box-shadow: 0 12px 24px rgba(59, 110, 245, 0.12);
   transform: translateY(-2px);
 <<<<<<< ours
+<<<<<<< ours
+>>>>>>> theirs
+=======
 >>>>>>> theirs
 =======
 >>>>>>> theirs
@@ -349,11 +407,14 @@ header .auth-actions {
   font-size: 0.9rem;
 <<<<<<< ours
 <<<<<<< ours
+<<<<<<< ours
 }
 
 .image-card .info strong {
   font-size: 0.95rem;
 =======
+=======
+>>>>>>> theirs
 =======
 >>>>>>> theirs
   color: var(--text-muted);
@@ -363,6 +424,9 @@ header .auth-actions {
   font-size: 0.96rem;
   color: var(--text);
 <<<<<<< ours
+<<<<<<< ours
+>>>>>>> theirs
+=======
 >>>>>>> theirs
 =======
 >>>>>>> theirs
@@ -381,6 +445,7 @@ button,
   border: none;
 <<<<<<< ours
 <<<<<<< ours
+<<<<<<< ours
   border-radius: 999px;
   padding: 0.55rem 1.25rem;
   cursor: pointer;
@@ -392,6 +457,8 @@ button,
   gap: 0.35rem;
   transition: transform 0.15s ease, box-shadow 0.2s ease;
 =======
+=======
+>>>>>>> theirs
 =======
 >>>>>>> theirs
   border-radius: 12px;
@@ -406,6 +473,9 @@ button,
   gap: 0.35rem;
   transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
 <<<<<<< ours
+<<<<<<< ours
+>>>>>>> theirs
+=======
 >>>>>>> theirs
 =======
 >>>>>>> theirs
@@ -414,6 +484,7 @@ button,
 button:hover,
 .button:hover {
   transform: translateY(-1px);
+<<<<<<< ours
 <<<<<<< ours
 <<<<<<< ours
   box-shadow: 0 16px 30px rgba(14, 165, 233, 0.35);
@@ -428,6 +499,8 @@ button.danger {
   background: rgba(248, 113, 113, 0.25);
   color: #fecaca;
 =======
+=======
+>>>>>>> theirs
 =======
 >>>>>>> theirs
   box-shadow: 0 18px 32px rgba(59, 110, 245, 0.25);
@@ -447,6 +520,9 @@ button.danger {
   background: var(--danger-soft);
   color: var(--danger);
 <<<<<<< ours
+<<<<<<< ours
+>>>>>>> theirs
+=======
 >>>>>>> theirs
 =======
 >>>>>>> theirs
@@ -461,6 +537,7 @@ select {
   border-radius: 12px;
 <<<<<<< ours
 <<<<<<< ours
+<<<<<<< ours
   border: 1px solid rgba(148, 163, 184, 0.25);
   background: rgba(15, 23, 42, 0.7);
   color: var(--text);
@@ -469,12 +546,17 @@ select {
 =======
 =======
 >>>>>>> theirs
+=======
+>>>>>>> theirs
   border: 1px solid var(--border);
   background: #fff;
   color: var(--text);
   font: inherit;
   transition: border 0.2s ease, box-shadow 0.2s ease;
 <<<<<<< ours
+<<<<<<< ours
+>>>>>>> theirs
+=======
 >>>>>>> theirs
 =======
 >>>>>>> theirs
@@ -492,7 +574,11 @@ select:focus {
   border-color: var(--accent);
 <<<<<<< ours
 <<<<<<< ours
+<<<<<<< ours
   background: rgba(14, 165, 233, 0.12);
+=======
+  box-shadow: 0 0 0 4px var(--accent-soft);
+>>>>>>> theirs
 =======
   box-shadow: 0 0 0 4px var(--accent-soft);
 >>>>>>> theirs
@@ -506,9 +592,15 @@ label span {
   margin-bottom: 0.35rem;
 <<<<<<< ours
 <<<<<<< ours
+<<<<<<< ours
   font-size: 0.85rem;
   color: rgba(203, 213, 225, 0.85);
   letter-spacing: 0.02em;
+=======
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  letter-spacing: 0.03em;
+>>>>>>> theirs
 =======
   font-size: 0.8rem;
   color: var(--text-muted);
@@ -529,7 +621,11 @@ label span {
   font-size: 0.9rem;
 <<<<<<< ours
 <<<<<<< ours
+<<<<<<< ours
   color: rgba(226, 232, 240, 0.75);
+=======
+  color: var(--text-muted);
+>>>>>>> theirs
 =======
   color: var(--text-muted);
 >>>>>>> theirs
@@ -543,9 +639,15 @@ label span {
   flex-direction: column;
 <<<<<<< ours
 <<<<<<< ours
+<<<<<<< ours
   gap: 1.25rem;
   overflow: auto;
   max-height: 720px;
+=======
+  gap: 1.2rem;
+  overflow: auto;
+  max-height: calc(100vh - 280px);
+>>>>>>> theirs
 =======
   gap: 1.2rem;
   overflow: auto;
@@ -565,6 +667,7 @@ label span {
   gap: 1.25rem;
 <<<<<<< ours
 <<<<<<< ours
+<<<<<<< ours
   padding: 1rem;
   background: rgba(15, 23, 42, 0.6);
   border: 1px solid rgba(148, 163, 184, 0.15);
@@ -573,12 +676,17 @@ label span {
 =======
 =======
 >>>>>>> theirs
+=======
+>>>>>>> theirs
   padding: 1.1rem;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 18px;
   box-shadow: 0 20px 40px rgba(27, 36, 84, 0.08);
 <<<<<<< ours
+<<<<<<< ours
+>>>>>>> theirs
+=======
 >>>>>>> theirs
 =======
 >>>>>>> theirs
@@ -601,8 +709,13 @@ label span {
   margin: 0;
 <<<<<<< ours
 <<<<<<< ours
+<<<<<<< ours
   font-size: 1rem;
   color: rgba(248, 250, 252, 0.9);
+=======
+  font-size: 1.05rem;
+  color: var(--text);
+>>>>>>> theirs
 =======
   font-size: 1.05rem;
   color: var(--text);
@@ -618,7 +731,11 @@ label span {
   line-height: 1.5;
 <<<<<<< ours
 <<<<<<< ours
+<<<<<<< ours
   color: rgba(226, 232, 240, 0.85);
+=======
+  color: var(--text-muted);
+>>>>>>> theirs
 =======
   color: var(--text-muted);
 >>>>>>> theirs
@@ -633,8 +750,13 @@ label span {
   border-radius: 12px;
 <<<<<<< ours
 <<<<<<< ours
+<<<<<<< ours
   background: rgba(56, 189, 248, 0.12);
   color: rgba(125, 211, 252, 1);
+=======
+  background: var(--accent-soft);
+  color: var(--accent);
+>>>>>>> theirs
 =======
   background: var(--accent-soft);
   color: var(--accent);
@@ -649,8 +771,13 @@ label span {
 .status.error {
 <<<<<<< ours
 <<<<<<< ours
+<<<<<<< ours
   background: rgba(248, 113, 113, 0.15);
   color: #fecaca;
+=======
+  background: var(--danger-soft);
+  color: var(--danger);
+>>>>>>> theirs
 =======
   background: var(--danger-soft);
   color: var(--danger);
@@ -676,9 +803,15 @@ label span {
   border-radius: 999px;
 <<<<<<< ours
 <<<<<<< ours
+<<<<<<< ours
   padding: 0.3rem 0.75rem;
   background: rgba(148, 163, 184, 0.2);
   color: rgba(226, 232, 240, 0.9);
+=======
+  padding: 0.35rem 0.8rem;
+  background: rgba(59, 110, 245, 0.12);
+  color: var(--accent);
+>>>>>>> theirs
 =======
   padding: 0.35rem 0.8rem;
   background: rgba(59, 110, 245, 0.12);
@@ -695,7 +828,11 @@ label span {
   font-size: 0.85rem;
 <<<<<<< ours
 <<<<<<< ours
+<<<<<<< ours
   color: rgba(226, 232, 240, 0.72);
+=======
+  color: var(--text-muted);
+>>>>>>> theirs
 =======
   color: var(--text-muted);
 >>>>>>> theirs
@@ -708,8 +845,11 @@ label span {
   main {
 <<<<<<< ours
 <<<<<<< ours
+<<<<<<< ours
     grid-template-columns: 1fr;
 =======
+=======
+>>>>>>> theirs
 =======
 >>>>>>> theirs
     grid-template-columns: repeat(2, minmax(280px, 1fr));
@@ -719,6 +859,9 @@ label span {
     grid-column: 1 / -1;
     position: static;
 <<<<<<< ours
+<<<<<<< ours
+>>>>>>> theirs
+=======
 >>>>>>> theirs
 =======
 >>>>>>> theirs
@@ -732,12 +875,18 @@ label span {
 @media (max-width: 720px) {
 <<<<<<< ours
 <<<<<<< ours
+<<<<<<< ours
   body {
     background: #0f172a;
   }
 
   main {
     padding: 1.5rem;
+=======
+  main {
+    padding: 1.5rem;
+    grid-template-columns: 1fr;
+>>>>>>> theirs
 =======
   main {
     padding: 1.5rem;

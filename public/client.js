@@ -17,6 +17,10 @@ const dom = {
   fileInput: document.querySelector('#file-input'),
 <<<<<<< ours
 <<<<<<< ours
+<<<<<<< ours
+=======
+  dropZone: document.querySelector('#drop-zone'),
+>>>>>>> theirs
 =======
   dropZone: document.querySelector('#drop-zone'),
 >>>>>>> theirs
@@ -174,6 +178,11 @@ function refreshImageList() {
       article.classList.add('active');
 <<<<<<< ours
 <<<<<<< ours
+<<<<<<< ours
+=======
+    } else {
+      article.classList.remove('active');
+>>>>>>> theirs
 =======
     } else {
       article.classList.remove('active');
@@ -239,11 +248,14 @@ function handleGlobalChange() {
 
 <<<<<<< ours
 <<<<<<< ours
+<<<<<<< ours
 async function addFiles(files) {
   const list = Array.from(files);
   if (!list.length) return;
   await Promise.all(list.map(async (file) => {
 =======
+=======
+>>>>>>> theirs
 =======
 >>>>>>> theirs
 function isSupportedImage(file) {
@@ -264,6 +276,9 @@ async function addFiles(files) {
       return;
     }
 <<<<<<< ours
+<<<<<<< ours
+>>>>>>> theirs
+=======
 >>>>>>> theirs
 =======
 >>>>>>> theirs
@@ -288,7 +303,10 @@ async function addFiles(files) {
   }
 <<<<<<< ours
 <<<<<<< ours
+<<<<<<< ours
 =======
+=======
+>>>>>>> theirs
 =======
 >>>>>>> theirs
   const added = state.images.length - previousCount;
@@ -308,6 +326,9 @@ async function addFiles(files) {
     setStatus(`${added === 1 ? 'Imagen agregada' : `${added} imágenes agregadas`} correctamente.`);
   }
 <<<<<<< ours
+<<<<<<< ours
+>>>>>>> theirs
+=======
 >>>>>>> theirs
 =======
 >>>>>>> theirs
@@ -551,7 +572,10 @@ function registerFileInput() {
 
 <<<<<<< ours
 <<<<<<< ours
+<<<<<<< ours
 =======
+=======
+>>>>>>> theirs
 =======
 >>>>>>> theirs
 function registerDropZone() {
@@ -604,6 +628,9 @@ function registerDropZone() {
 }
 
 <<<<<<< ours
+<<<<<<< ours
+>>>>>>> theirs
+=======
 >>>>>>> theirs
 =======
 >>>>>>> theirs
@@ -674,6 +701,10 @@ function init() {
   registerFileInput();
 <<<<<<< ours
 <<<<<<< ours
+<<<<<<< ours
+=======
+  registerDropZone();
+>>>>>>> theirs
 =======
   registerDropZone();
 >>>>>>> theirs
