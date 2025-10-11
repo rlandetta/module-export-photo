@@ -5,8 +5,8 @@ import archiver from 'archiver';
 
 const DIST_DIR = path.resolve('dist');
 const OUTPUT = path.join(DIST_DIR, 'module-preview.zip');
-const PUBLIC_DIR = path.resolve('public');
-const README_SNIPPET = `Instrucciones rápidas\n=====================\n\n1. Extrae el contenido del ZIP.\n2. Abre public/index.html en tu navegador.\n3. El flujo de Google Drive no estará disponible sin el backend Node.js.\n`;
+const SOURCE_DIR = path.resolve('site');
+const README_SNIPPET = `Instrucciones rápidas\n=====================\n\n1. Extrae el contenido del ZIP.\n2. Abre site/index.html en tu navegador.\n3. El flujo de Google Drive no estará disponible sin el backend Node.js.\n`;
 
 async function ensureDirectories() {
   await fs.mkdir(DIST_DIR, { recursive: true });
@@ -24,12 +24,12 @@ async function removeOldArchive() {
 
 async function verifySource() {
   try {
-    const stats = await fs.stat(PUBLIC_DIR);
+    const stats = await fs.stat(SOURCE_DIR);
     if (!stats.isDirectory()) {
-      throw new Error('La carpeta public no existe o no es un directorio.');
+      throw new Error('La carpeta site no existe o no es un directorio.');
     }
   } catch (error) {
-    throw new Error(`No se encontró la carpeta public. Detalle: ${error.message}`);
+    throw new Error(`No se encontró la carpeta site. Detalle: ${error.message}`);
   }
 }
 
@@ -44,7 +44,7 @@ async function createArchive() {
 
   archive.pipe(output);
 
-  archive.directory(PUBLIC_DIR, 'public');
+  archive.directory(SOURCE_DIR, 'site');
   archive.append(README_SNIPPET, { name: 'LEEME.txt' });
 
   await archive.finalize();

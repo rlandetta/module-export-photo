@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Módulo de exportación de fotos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-background" aria-hidden="true"></div>
+    <header class="masthead">
+      <div class="container masthead__inner">
+        <div class="masthead__primary">
+          <span class="badge">Beta v0.6 · Exportador para agencias</span>
+          <h1 class="masthead__title">Módulo de exportación</h1>
+          <p class="masthead__status" role="status">Validando sesión…</p>
+        </div>
+        <div class="masthead__actions">
+          <button type="button" class="btn btn--primary">Conectar con Google Drive</button>
+          <button type="button" class="btn btn--ghost">Cerrar sesión</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="workspace container" aria-label="Módulo de exportación de fotografías">
+      <section class="panel panel--upload" aria-labelledby="upload-title">
+        <header class="panel__header">
+          <div>
+            <h2 id="upload-title">Cargar imágenes</h2>
+            <p>Agrega las fotografías de la cobertura y elige cuáles exportar.</p>
+          </div>
+        </header>
+        <label class="dropzone" id="dropzone" for="file-input">
+          <input
+            type="file"
+            id="file-input"
+            accept="image/*"
+            multiple
+            aria-label="Seleccionar fotografías desde el dispositivo"
+          />
+          <div class="dropzone__content">
+            <svg
+              class="dropzone__icon"
+              width="48"
+              height="48"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M12 4.5l-6 6h4.5v6h3v-6H18l-6-6z"
+                fill="currentColor"
+              />
+              <path
+                d="M6 18.75h12V16.5h1.5v2.25A2.25 2.25 0 0 1 17.25 21h-10.5A2.25 2.25 0 0 1 4.5 18.75V16.5H6v2.25z"
+                fill="currentColor"
+              />
+            </svg>
+            <strong>Arrastra tus imágenes aquí</strong>
+            <span id="dropzone-status">Aún no seleccionas archivos</span>
+            <p class="dropzone__hint">
+              O selecciona desde tu equipo · JPG, PNG o RAW · hasta 25&nbsp;MB por archivo
+            </p>
+          </div>
+        </label>
+
+        <div class="photo-summary">
+          <div class="photo-summary__header">
+            <h3>Listado de fotos</h3>
+            <span id="photo-counter" class="photo-summary__count">0 elementos</span>
+          </div>
+          <ul
+            id="photo-list"
+            class="photo-list"
+            aria-live="polite"
+            aria-relevant="additions removals"
+          >
+            <li id="photo-empty" class="photo-list__empty">
+              Aún no has cargado fotografías. Utiliza el recuadro superior.
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="panel panel--editor" aria-labelledby="editor-title">
+        <header class="panel__header">
+          <div>
+            <h2 id="editor-title">Editor</h2>
+            <p>Completa los datos editoriales y personaliza cada caption.</p>
+          </div>
+        </header>
+
+        <form id="editor-form" class="editor-form" autocomplete="off">
+          <div class="field">
+            <label for="coverage-title">Título de la cobertura</label>
+            <input
+              id="coverage-title"
+              name="coverageTitle"
+              type="text"
+              placeholder="Ej. CIERRÉS-VIALES"
+            />
+          </div>
+
+          <div class="field">
+            <label for="caption-base">Caption base</label>
+            <textarea
+              id="caption-base"
+              name="captionBase"
+              rows="3"
+              placeholder="Contexto, ubicación, agencia..."
+            ></textarea>
+          </div>
+
+          <div class="field field--inline">
+            <label class="field--checkbox">
+              <input type="checkbox" id="include-date" name="includeDate" checked />
+              <span>Incluir fecha en el caption</span>
+            </label>
+            <div class="field__inline-control">
+              <label for="capture-date">Fecha</label>
+              <input id="capture-date" name="captureDate" type="date" placeholder="mm/dd/yyyy" />
+            </div>
+          </div>
+
+          <div class="field-grid">
+            <div class="field">
+              <label for="location">Lugar</label>
+              <input id="location" name="location" type="text" placeholder="Ciudad, país" />
+            </div>
+            <div class="field">
+              <label for="agency">Agencia</label>
+              <input id="agency" name="agency" type="text" placeholder="Ej. XINHUA" />
+            </div>
+          </div>
+
+          <div class="field-grid">
+            <div class="field">
+              <label for="photographer">Por</label>
+              <input id="photographer" name="photographer" type="text" placeholder="Autor de las fotos" />
+            </div>
+            <div class="field">
+              <label for="editor-initials">Editor / Iniciales</label>
+              <input
+                id="editor-initials"
+                name="editorInitials"
+                type="text"
+                placeholder="Iniciales del editor"
+              />
+            </div>
+          </div>
+        </form>
+      </section>
+
+      <section class="panel panel--preview" aria-labelledby="preview-title">
+        <header class="panel__header">
+          <div>
+            <h2 id="preview-title">Vista previa</h2>
+            <p>Revisa el documento antes de exportar. Las miniaturas se generan automáticamente.</p>
+          </div>
+        </header>
+
+        <div class="preview-stage" id="preview-stage">
+          <img id="preview-image" alt="Vista previa de la fotografía seleccionada" hidden />
+          <div id="preview-empty" class="preview-empty" role="status">
+            Selecciona una fotografía para mostrar la vista previa aquí.
+          </div>
+          <div id="preview-caption" class="preview-caption" hidden>
+            <p class="preview-caption__title" id="preview-title-text"></p>
+            <p class="preview-caption__body" id="preview-body-text"></p>
+            <p class="preview-caption__meta" id="preview-meta-text"></p>
+          </div>
+        </div>
+
+        <div class="preview-actions">
+          <button type="button" id="download-document" class="btn btn--primary" disabled>
+            Descargar documento
+          </button>
+          <button type="button" id="export-drive" class="btn btn--accent" disabled>
+            Exportar a Google Drive
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>
+          Diseñado para equipos editoriales que requieren flujos ágiles de selección,
+          edición y exportación de fotografías con captions consistentes.
+        </p>
+      </div>
+    </footer>
+
+    <template id="photo-item-template">
+      <li class="photo-list__item" data-photo-id="">
+        <div class="photo-list__thumb" aria-hidden="true">
+          <img src="" alt="" />
+        </div>
+        <div class="photo-list__info">
+          <strong class="photo-list__name"></strong>
+          <span class="photo-list__meta"></span>
+        </div>
+        <div class="photo-list__actions">
+          <button type="button" class="icon-button" data-action="edit" title="Editar foto">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M4 16.5V20h3.5l10-10-3.5-3.5-10 10zm14.7-9.8a1 1 0 0 0 0-1.4l-2-2a1 1 0 0 0-1.4 0l-1.8 1.8 3.5 3.5 1.7-1.9z"
+              />
+            </svg>
+            <span class="sr-only">Editar</span>
+          </button>
+          <button type="button" class="icon-button icon-button--danger" data-action="delete" title="Eliminar foto">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M9 3h6l1 1h4v2H4V4h4l1-1zm1 6v9h2v-9h-2zm4 0v9h2v-9h-2zM6 8h12v12H6V8z"
+              />
+            </svg>
+            <span class="sr-only">Eliminar</span>
+          </button>
+        </div>
+      </li>
+    </template>
+
+    <script src="client.js" type="module"></script>
+  </body>
+</html>
