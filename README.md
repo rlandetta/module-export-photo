@@ -1,5 +1,6 @@
 <<<<<<< ours
 <<<<<<< ours
+<<<<<<< ours
 # Módulo de carga, edición de caption y exportación de imágenes
 
 Este proyecto proporciona un módulo listo para usarse que permite:
@@ -25,6 +26,8 @@ Este proyecto proporciona un módulo listo para usarse que permite:
 
 > No se requieren dependencias ni procesos de compilación: todo funciona con HTML, CSS y JavaScript puro.
 =======
+=======
+>>>>>>> theirs
 =======
 >>>>>>> theirs
 # Módulo de exportación fotográfica
@@ -87,6 +90,7 @@ La interfaz replica el flujo mostrado en las capturas de referencia y entrega un
 - `npm start` – levanta el servidor en modo producción.
 - `npm test` – placeholder sin pruebas configuradas.
 <<<<<<< ours
+<<<<<<< ours
 >>>>>>> theirs
 =======
 >>>>>>> theirs
@@ -114,6 +118,28 @@ Este módulo se ofrece "tal cual" para que puedas incorporarlo a tus propios flu
 =======
 =======
 >>>>>>> theirs
+=======
+- `scripts/publish_to_github.sh` – automatiza la creación del repositorio público en tu cuenta de GitHub y realiza el primer push.
+- `dist/module-preview.zip` – paquete listo para descargar y abrir en otra máquina sin clonar el repositorio.
+
+## Vista previa rápida
+
+Para revisar la aplicación sin instalar dependencias, descarga el archivo `dist/module-preview.zip`, descomprímelo y abre `public/index.html` en tu navegador. El backend de Node no se ejecutará en este modo, por lo que las acciones que requieren Google Drive no estarán disponibles, pero podrás interactuar con la interfaz de carga, edición y vista previa del documento.
+
+## Publicar en GitHub
+
+Si ya tienes instalado [GitHub CLI](https://cli.github.com/) y has iniciado sesión con `gh auth login`, puedes crear el repositorio público y subir el código con:
+
+```bash
+scripts/publish_to_github.sh "module-v4" "Módulo de edición y exportación de imágenes para fotógrafos de agencias"
+```
+
+El script verificará que exista la autenticación activa, evitará sobreescribir remotos existentes y utilizará `gh repo create` para generar el repositorio público, configurarlo como `origin` y hacer el push inicial con el historial actual.
+
+## Estructura del proyecto
+
+```
+>>>>>>> theirs
 public/        # Interfaz web (HTML, CSS y JS)
 server/        # Servidor Express con integración Google Drive
 .env.example   # Variables de entorno requeridas
@@ -133,6 +159,9 @@ server/        # Servidor Express con integración Google Drive
 
 Este proyecto se entrega sin licencia explícita. Ajusta los términos según tus necesidades antes de distribuirlo.
 <<<<<<< ours
+<<<<<<< ours
+>>>>>>> theirs
+=======
 >>>>>>> theirs
 =======
 >>>>>>> theirs

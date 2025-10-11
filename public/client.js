@@ -16,6 +16,10 @@ const state = {
 const dom = {
   fileInput: document.querySelector('#file-input'),
 <<<<<<< ours
+<<<<<<< ours
+=======
+  dropZone: document.querySelector('#drop-zone'),
+>>>>>>> theirs
 =======
   dropZone: document.querySelector('#drop-zone'),
 >>>>>>> theirs
@@ -169,6 +173,11 @@ function refreshImageList() {
     if (state.activeImageId === image.id) {
       article.classList.add('active');
 <<<<<<< ours
+<<<<<<< ours
+=======
+    } else {
+      article.classList.remove('active');
+>>>>>>> theirs
 =======
     } else {
       article.classList.remove('active');
@@ -229,11 +238,14 @@ function handleGlobalChange() {
 }
 
 <<<<<<< ours
+<<<<<<< ours
 async function addFiles(files) {
   const list = Array.from(files);
   if (!list.length) return;
   await Promise.all(list.map(async (file) => {
 =======
+=======
+>>>>>>> theirs
 function isSupportedImage(file) {
   if (file.type && file.type.startsWith('image/')) return true;
   const extension = file.name.split('.').pop()?.toLowerCase();
@@ -251,6 +263,9 @@ async function addFiles(files) {
       skipped += 1;
       return;
     }
+<<<<<<< ours
+>>>>>>> theirs
+=======
 >>>>>>> theirs
     const previewUrl = URL.createObjectURL(file);
     const id = (window.crypto && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2, 10));
@@ -272,7 +287,10 @@ async function addFiles(files) {
     setActiveImage(state.images[0].id);
   }
 <<<<<<< ours
+<<<<<<< ours
 =======
+=======
+>>>>>>> theirs
   const added = state.images.length - previousCount;
   if (skipped && !added) {
     setStatus(`Se omitieron ${skipped} archivo${skipped === 1 ? '' : 's'} que no son compatibles.`, 'error');
@@ -289,6 +307,9 @@ async function addFiles(files) {
   if (added) {
     setStatus(`${added === 1 ? 'Imagen agregada' : `${added} imágenes agregadas`} correctamente.`);
   }
+<<<<<<< ours
+>>>>>>> theirs
+=======
 >>>>>>> theirs
 }
 
@@ -529,7 +550,10 @@ function registerFileInput() {
 }
 
 <<<<<<< ours
+<<<<<<< ours
 =======
+=======
+>>>>>>> theirs
 function registerDropZone() {
   if (!dom.dropZone) return;
 
@@ -579,6 +603,9 @@ function registerDropZone() {
   });
 }
 
+<<<<<<< ours
+>>>>>>> theirs
+=======
 >>>>>>> theirs
 async function checkAuthStatus() {
   try {
@@ -646,6 +673,10 @@ function init() {
   registerEditorListeners();
   registerFileInput();
 <<<<<<< ours
+<<<<<<< ours
+=======
+  registerDropZone();
+>>>>>>> theirs
 =======
   registerDropZone();
 >>>>>>> theirs
