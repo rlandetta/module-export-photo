@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "archiver": "^7.0.1",
+    "cd": "^0.3.3",
+    "fs-extra": "^11.3.2",
+    "glob": "^11.0.3"
+  },
+  "scripts": {
+    "bundle:preview": "node scripts/build_preview.mjs"
+  }
+}
