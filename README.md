@@ -6,6 +6,8 @@ La interfaz replica el flujo operativo en tres columnas:
 
 1. **Cargar imágenes** – arrastra o selecciona archivos, revisa metadatos básicos y decide qué elementos se incluirán en la exportación.
 2. **Editor editorial** – define el título de la cobertura, plantillas, fecha, lugar, agencia y créditos. Cada foto hereda la plantilla y puede ajustarse individualmente.
+   - `Cobertura del día` genera captions con la fecha del calendario en el formato: `(<YYMMDD>) -- Ciudad DD mes, AAAA (AGENCIA) -- Caption, el DD de mes de AAAA. (AGENCIA/Autor) (Iniciales)`.
+   - `Fechas anteriores` emplea el código de fecha del día actual y construye: `(<YYMMDD>) -- Ciudad, (AGENCIA) -- Caption. (AGENCIA/Autor) (Iniciales)`.
 3. **Vista previa y exportación** – revisa miniaturas + captions finales, elige entre generar HTML, TXT o ambos y descarga localmente o envía directo a Google Drive.
 
 ## Requisitos
@@ -47,7 +49,7 @@ Abre `http://localhost:5173` en tu navegador y sigue este flujo:
 3. Selecciona cada imagen para personalizar el nombre exportado, la descripción principal o el caption final. Puedes alternar entre modo automático/manual, regenerar desde la plantilla o guardar cambios.
 4. En **Vista previa** elige qué formatos generar:
    - `HTML` con miniaturas embebidas en base64.
-   - `TXT` con listado numerado de captions.
+   - `TXT` con maqueta similar al HTML (título en mayúsculas, metadatos y sub-bloques numerados).
 5. Usa **Descargar selección** para guardar los documentos en tu equipo (cada formato abre su diálogo de guardado) o autentícate con **Conectar con Google Drive** para subir imágenes + documentos a una carpeta compartida.
 
 ## Exportar a Google Drive

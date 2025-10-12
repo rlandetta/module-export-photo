@@ -59,6 +59,23 @@
           <h2>Editor</h2>
           <p class="description">Completa los datos editoriales y personaliza cada caption.</p>
         </div>
+        <div class="mode-tabs" role="tablist" aria-label="Tipo de caption">
+          <button
+            class="mode-tab is-active"
+            role="tab"
+            aria-selected="true"
+            data-mode="same-day"
+          >
+            Cobertura del día
+          </button>
+          <button class="mode-tab" role="tab" aria-selected="false" data-mode="previous-day">
+            Fechas anteriores
+          </button>
+        </div>
+        <p id="mode-hint" class="mode-hint">
+          Usa esta vista cuando la cobertura se realiza y entrega el mismo día. El formato incorpora
+          el código YYMMDD, la ciudad, la fecha editorial y agencia antes del caption.
+        </p>
         <div class="upload-grid">
           <label>
             <span>Título de la cobertura</span>

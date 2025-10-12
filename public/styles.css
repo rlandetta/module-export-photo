@@ -96,6 +96,43 @@ header .auth-actions {
   gap: 0.4rem;
 }
 
+.mode-tabs {
+  display: inline-flex;
+  gap: 0.5rem;
+  background: var(--surface-muted);
+  padding: 0.35rem;
+  border-radius: 12px;
+  align-self: flex-start;
+}
+
+.mode-tab {
+  border: none;
+  background: transparent;
+  font: inherit;
+  padding: 0.45rem 0.95rem;
+  border-radius: 10px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mode-tab:hover {
+  color: var(--text);
+  background: rgba(59, 110, 245, 0.1);
+}
+
+.mode-tab.is-active {
+  background: #fff;
+  color: var(--accent);
+  box-shadow: 0 6px 15px rgba(59, 110, 245, 0.15);
+}
+
+.mode-hint {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
 .module h2 {
   margin: 0;
   font-size: 1.35rem;
@@ -242,11 +279,13 @@ header .auth-actions {
   gap: 0.3rem;
   font-size: 0.88rem;
   color: var(--text-muted);
+  word-break: break-word;
 }
 
 .image-card .info strong {
   font-size: 0.96rem;
   color: var(--text);
+  word-break: break-word;
 }
 
 .image-card .actions {
@@ -347,6 +386,11 @@ label span {
   accent-color: var(--accent);
 }
 
+.toggle.is-disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
 .preview-wrapper {
   display: flex;
   flex-direction: column;
@@ -356,8 +400,8 @@ label span {
 }
 
 .preview-summary h3 {
-  margin: 0;
-  font-size: 1rem;
+  margin: 0 0 0.15rem;
+  font-size: 0.95rem;
   color: var(--text);
 }
 
@@ -377,9 +421,9 @@ label span {
 
 .preview-card {
   display: grid;
-  grid-template-columns: 140px 1fr;
-  gap: 1.1rem;
-  padding: 1.1rem;
+  grid-template-columns: 110px 1fr;
+  gap: 0.9rem;
+  padding: 0.9rem;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 18px;
@@ -390,7 +434,7 @@ label span {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 14px;
+  border-radius: 12px;
 }
 
 .preview-card .caption {
@@ -401,15 +445,17 @@ label span {
 
 .preview-card h3 {
   margin: 0;
-  font-size: 1.05rem;
+  font-size: 0.95rem;
   color: var(--text);
 }
 
 .preview-card p {
   margin: 0;
-  line-height: 1.5;
-  color: var(--text-muted);
+  line-height: 1.4;
+  color: rgba(27, 29, 41, 0.75);
   white-space: pre-wrap;
+  font-size: 0.85rem;
+  word-break: break-word;
 }
 
 .preview-empty {

@@ -11,6 +11,21 @@ import { google } from 'googleapis';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const MONTHS = [
+  'enero',
+  'febrero',
+  'marzo',
+  'abril',
+  'mayo',
+  'junio',
+  'julio',
+  'agosto',
+  'septiembre',
+  'octubre',
+  'noviembre',
+  'diciembre'
+];
+
 const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -133,6 +148,16 @@ function sanitizeFileName(value) {
     .replace(/\s+/g, '-');
 }
 
+function formatEventDate(value) {
+  if (!value) return '';
+  const date = new Date(`${value}T00:00:00`);
+  if (Number.isNaN(date.getTime())) return '';
+  const day = date.getDate();
+  const month = date.getMonth();
+  const year = date.getFullYear();
+  return `${day} de ${MONTHS[month]} de ${year}`;
+}
+
 function escapeHtml(value = '') {
   return value
     .replace(/&/g, '&amp;')
@@ -148,6 +173,8 @@ function buildHtmlDocument(metadata, entries) {
   if (metadata.agency) metaParts.push(`Agencia: ${escapeHtml(metadata.agency)}`);
   if (metadata.photographer) metaParts.push(`Fotógrafo/a: ${escapeHtml(metadata.photographer)}`);
   if (metadata.editorInitials) metaParts.push(`Editor/a: ${escapeHtml(metadata.editorInitials)}`);
+  const formattedEventDate = formatEventDate(metadata.eventDate);
+  if (formattedEventDate) metaParts.push(`Fecha de cobertura: ${escapeHtml(formattedEventDate)}`);
 
   const entriesHtml = entries
     .map(
@@ -204,24 +231,28 @@ ${entriesHtml}
 
 function buildTextDocument(metadata, entries) {
   const coverageTitle = (metadata.coverageTitle || 'Exportación de fotografías').toUpperCase();
+  const formattedEventDate = formatEventDate(metadata.eventDate);
   const header = [
     coverageTitle,
     ''.padEnd(coverageTitle.length, '='),
+    '',
     metadata.agency ? `Agencia: ${metadata.agency}` : null,
     metadata.photographer ? `Fotógrafo/a: ${metadata.photographer}` : null,
     metadata.editorInitials ? `Editor/a: ${metadata.editorInitials}` : null,
-    '',
-    'CAPTIONS'
+    formattedEventDate ? `Fecha de cobertura: ${formattedEventDate}` : null,
+    ''.padEnd(coverageTitle.length, '='),
+    ''
   ].filter((line) => line !== null);
 
   const body = entries
-    .map(
-      (entry, index) =>
-        `${index + 1}. ${entry.displayName || 'Sin título'}\n${entry.caption || ''}`
-    )
+    .map((entry, index) => {
+      const titleLine = `${index + 1}. ${entry.displayName || 'Sin título'}`;
+      const underline = ''.padEnd(Math.max(titleLine.length, 12), '-');
+      return `${titleLine}\n${underline}\n${entry.caption || ''}`;
+    })
     .join('\n\n');
 
-  return `${header.join('\n')}\n\n${body}\n`;
+  return `${header.join('\n')}${body ? `${body}\n` : ''}`;
 }
 
 async function uploadFileToDrive(drive, folderId, fileBuffer, metadata) {

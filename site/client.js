@@ -22,6 +22,7 @@ const state = {
   agency: '',
   photographer: '',
   editorInitials: '',
+  captionMode: 'same-day',
   images: [],
   activeImageId: null,
   lastExportHtml: null,
@@ -59,6 +60,8 @@ const dom = {
   imageAuto: document.querySelector('#image-auto'),
   applyTemplate: document.querySelector('#apply-template'),
   saveImage: document.querySelector('#save-image'),
+  modeTabs: document.querySelectorAll('.mode-tab'),
+  modeHint: document.querySelector('#mode-hint'),
   optionHtml: document.querySelector('#option-html'),
   optionText: document.querySelector('#option-text'),
   status: document.querySelector('#status'),
@@ -89,21 +92,9 @@ function formatFileDate(file) {
   }).format(date);
 }
 
-function formatDateSegments(value) {
-  if (!value) {
-    return {
-      code: '',
-      short: '',
-      long: ''
-    };
-  }
-  const date = new Date(`${value}T00:00:00`);
-  if (Number.isNaN(date.getTime())) {
-    return {
-      code: '',
-      short: '',
-      long: ''
-    };
+function formatDateSegmentsFromDate(date) {
+  if (!date || Number.isNaN(date.getTime())) {
+    return { code: '', short: '', long: '' };
   }
   const day = date.getDate();
   const month = date.getMonth();
@@ -112,6 +103,23 @@ function formatDateSegments(value) {
   const short = `${day} ${MONTHS[month]}, ${year}`;
   const long = `${day} de ${MONTHS[month]} de ${year}`;
   return { code, short, long };
+}
+
+function formatDateSegments(value) {
+  if (!value) {
+    return { code: '', short: '', long: '' };
+  }
+  const date = new Date(`${value}T00:00:00`);
+  if (Number.isNaN(date.getTime())) {
+    return { code: '', short: '', long: '' };
+  }
+  return formatDateSegmentsFromDate(date);
+}
+
+function getTodaySegments() {
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  return formatDateSegmentsFromDate(now);
 }
 
 function getImageById(id) {
@@ -126,53 +134,77 @@ function invalidateExports() {
 
 function composeCaption(image) {
   const descriptionRaw = (image.captionBody || '').replace(/\s+/g, ' ').trim();
-  const includeDate = state.includeDate && state.eventDate;
-  const { code, short, long } = includeDate ? formatDateSegments(state.eventDate) : { code: '', short: '', long: '' };
   const location = (state.location || '').trim();
-  const locationLead = location ? location.toLocaleUpperCase('es-ES') : '';
   const agency = (state.agency || '').trim();
   const photographer = (state.photographer || '').trim();
   const editor = (state.editorInitials || '').trim();
 
-  const prefix = includeDate && code ? `(${code}) -- ` : '';
+  const credits = [];
+  if (agency) credits.push(agency);
+  if (photographer) credits.push(photographer);
 
-  const leadParts = [];
-  if (locationLead) leadParts.push(locationLead);
-  if (includeDate && short) leadParts.push(short);
-  let lead = leadParts.join(', ');
-  if (agency) {
-    lead = lead ? `${lead} (${agency})` : `(${agency})`;
+  if (state.captionMode === 'previous-day') {
+    const { code } = getTodaySegments();
+    let caption = '';
+    if (code) {
+      caption = `(${code})`;
+    }
+    const agencyPart = agency ? `(${agency})` : '';
+    let lead = '';
+    if (location && agencyPart) {
+      lead = `${location}, ${agencyPart}`;
+    } else if (location || agencyPart) {
+      lead = [location, agencyPart].filter(Boolean).join(' ');
+    }
+    if (lead) {
+      caption += `${caption ? ' -- ' : ''}${lead}`;
+    }
+    if (descriptionRaw) {
+      caption += `${caption ? ' -- ' : ''}${descriptionRaw}`;
+      caption = caption.replace(/[\s.]*$/, '');
+      caption += '.';
+    }
+    if (credits.length) {
+      caption += ` (${credits.join('/')})`;
+    }
+    if (editor) {
+      caption += ` (${editor})`;
+    }
+    return caption.replace(/\s+/g, ' ').trim();
   }
 
-  let caption = prefix;
-  if (lead) {
-    caption += lead;
+  const includeDate = state.includeDate && state.eventDate;
+  const { code, short, long } = includeDate ? formatDateSegments(state.eventDate) : { code: '', short: '', long: '' };
+
+  let caption = '';
+  if (includeDate && code) {
+    caption = `(${code})`;
+  }
+
+  const leadPieces = [];
+  if (location) leadPieces.push(location);
+  if (includeDate && short) leadPieces.push(short);
+  const lead = leadPieces.join(' ');
+  const agencyPart = agency ? `(${agency})` : '';
+
+  if (lead || agencyPart) {
+    const segment = [lead, agencyPart].filter(Boolean).join(' ');
+    if (segment) {
+      caption += `${caption ? ' -- ' : ''}${segment}`;
+    }
   }
 
   if (descriptionRaw) {
-    if (lead) {
-      caption += ` -- ${descriptionRaw}`;
-    } else {
-      caption += descriptionRaw;
-    }
+    caption += `${caption ? ' -- ' : ''}${descriptionRaw}`;
   }
 
   if (includeDate && long) {
-    if (descriptionRaw) {
-      caption = caption.replace(/[.,\s]*$/, '');
-      caption += `, el ${long}.`;
-    } else if (lead) {
-      caption += `. El ${long}.`;
-    } else {
-      caption += `El ${long}.`;
-    }
+    caption = caption.replace(/[.,\s]*$/, '');
+    caption += `, el ${long}.`;
   } else if (descriptionRaw && !/[.!?…]$/.test(descriptionRaw)) {
     caption += '.';
   }
 
-  const credits = [];
-  if (agency) credits.push(agency);
-  if (photographer) credits.push(photographer);
   if (credits.length) {
     caption += ` (${credits.join('/')})`;
   }
@@ -207,6 +239,36 @@ function setExportResult(message, type = 'info') {
   dom.exportResult.classList.toggle('error', type === 'error');
 }
 
+function refreshModeUI() {
+  const sameDay = state.captionMode === 'same-day';
+  dom.modeTabs.forEach((tab) => {
+    const tabMode = tab.dataset.mode;
+    const isActive = tabMode === state.captionMode;
+    tab.classList.toggle('is-active', isActive);
+    tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+  });
+  if (dom.modeHint) {
+    dom.modeHint.textContent = sameDay
+      ? 'Usa esta vista cuando la cobertura se realiza y entrega el mismo día. El formato incorpora el código YYMMDD, la ciudad, la fecha editorial y la agencia antes del caption.'
+      : 'Selecciona esta vista cuando la foto se tomó antes del día de hoy. El código inicial usa la fecha actual del sistema y el bloque principal muestra ciudad, agencia y caption, seguido por los créditos editoriales.';
+  }
+  const includeContainer = dom.includeDate?.closest('.toggle');
+  if (includeContainer) {
+    includeContainer.classList.toggle('is-disabled', !sameDay);
+  }
+  if (dom.includeDate) {
+    dom.includeDate.disabled = !sameDay;
+  }
+}
+
+function setCaptionMode(mode) {
+  if (!['same-day', 'previous-day'].includes(mode)) return;
+  if (state.captionMode === mode) return;
+  state.captionMode = mode;
+  refreshModeUI();
+  handleGlobalChange();
+}
+
 function refreshPreview() {
   const included = state.images.filter((image) => image.include);
   dom.previewGrid.innerHTML = '';
@@ -218,6 +280,8 @@ function refreshPreview() {
   if (state.agency) metaParts.push(`Agencia: ${state.agency}`);
   if (state.photographer) metaParts.push(`Fotógrafo/a: ${state.photographer}`);
   if (state.editorInitials) metaParts.push(`Editor/a: ${state.editorInitials}`);
+  const eventDateFormatted = state.eventDate ? formatDateSegments(state.eventDate).long : '';
+  if (eventDateFormatted) metaParts.push(`Fecha de cobertura: ${eventDateFormatted}`);
   metaParts.push(`Imágenes seleccionadas: ${included.length}/${state.images.length}`);
   dom.previewMeta.textContent = metaParts.join(' · ');
 
@@ -323,6 +387,7 @@ function persistActiveImage() {
   const newBody = dom.imageBody.value.replace(/\r/g, '');
   if (image.captionBody !== newBody) {
     image.captionBody = newBody;
+    image.usesGlobalTemplate = image.captionBody === state.captionTemplate;
   }
 
   const autoChecked = dom.imageAuto.checked;
@@ -514,13 +579,13 @@ async function buildExportHtml() {
   );
 
   const coverageTitle = (state.coverageTitle || 'Exportación de fotografías').toUpperCase();
-  const headerMeta = [
-    state.agency ? `Agencia: ${escapeHtml(state.agency)}` : null,
-    state.photographer ? `Fotógrafo/a: ${escapeHtml(state.photographer)}` : null,
-    state.editorInitials ? `Editor/a: ${escapeHtml(state.editorInitials)}` : null
-  ]
-    .filter(Boolean)
-    .join(' · ');
+  const metaParts = [];
+  if (state.agency) metaParts.push(`Agencia: ${state.agency}`);
+  if (state.photographer) metaParts.push(`Fotógrafo/a: ${state.photographer}`);
+  if (state.editorInitials) metaParts.push(`Editor/a: ${state.editorInitials}`);
+  const coverageSegments = state.eventDate ? formatDateSegments(state.eventDate) : { long: '' };
+  if (coverageSegments.long) metaParts.push(`Fecha de cobertura: ${coverageSegments.long}`);
+  const headerMeta = metaParts.length ? metaParts.map((part) => escapeHtml(part)).join(' · ') : '—';
 
   const entriesHtml = entries
     .map(
@@ -573,23 +638,28 @@ ${entriesHtml}
 function buildExportText() {
   const included = state.images.filter((image) => image.include);
   const coverageTitle = (state.coverageTitle || 'Exportación de fotografías').toUpperCase();
-  const lines = [
+  const segments = state.eventDate ? formatDateSegments(state.eventDate) : { long: '' };
+  const headerLines = [
     coverageTitle,
     ''.padEnd(coverageTitle.length, '='),
+    '',
     state.agency ? `Agencia: ${state.agency}` : null,
     state.photographer ? `Fotógrafo/a: ${state.photographer}` : null,
     state.editorInitials ? `Editor/a: ${state.editorInitials}` : null,
-    '',
-    'CAPTIONS'
+    segments.long ? `Fecha de cobertura: ${segments.long}` : null,
+    ''.padEnd(coverageTitle.length, '='),
+    ''
   ].filter((line) => line !== null);
 
+  const blocks = [headerLines.join('\n')];
+
   included.forEach((image, index) => {
-    lines.push('');
-    lines.push(`${index + 1}. ${image.displayName || image.file.name}`);
-    lines.push(image.caption);
+    const titleLine = `${index + 1}. ${image.displayName || image.file.name}`;
+    const underline = ''.padEnd(Math.max(titleLine.length, 12), '-');
+    blocks.push(`${titleLine}\n${underline}\n${image.caption}`);
   });
 
-  return `${lines.join('\n')}\n`;
+  return `${blocks.join('\n\n')}\n`;
 }
 
 function downloadBlob(content, filename, mimeType = 'text/html') {
@@ -658,6 +728,7 @@ async function handleExport() {
       agency: state.agency,
       photographer: state.photographer,
       editorInitials: state.editorInitials,
+      captionMode: state.captionMode,
       exportOptions: state.exportOptions,
       entries: included.map((image) => ({
         id: image.id,
@@ -725,6 +796,22 @@ function registerGlobalListeners() {
   });
 }
 
+function registerModeTabs() {
+  dom.modeTabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      const { mode } = tab.dataset;
+      setCaptionMode(mode);
+    });
+    tab.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        const { mode } = tab.dataset;
+        setCaptionMode(mode);
+      }
+    });
+  });
+}
+
 function registerEditorListeners() {
   dom.displayName.addEventListener('input', () => {
     if (suppressEditorUpdates) return;
@@ -742,7 +829,7 @@ function registerEditorListeners() {
     const image = getImageById(state.activeImageId);
     if (!image) return;
     image.captionBody = dom.imageBody.value.replace(/\r/g, '');
-    image.usesGlobalTemplate = false;
+    image.usesGlobalTemplate = image.captionBody === state.captionTemplate;
     image.isDirty = true;
     if (image.autoCaption) {
       image.caption = composeCaption(image);
@@ -930,6 +1017,7 @@ function registerExportOptions() {
 
 function init() {
   hydrateStateFromInputs();
+  refreshModeUI();
   registerGlobalListeners();
   registerEditorListeners();
   registerFileInput();
@@ -937,6 +1025,7 @@ function init() {
   registerPreviewActions();
   registerExportOptions();
   registerAuthButtons();
+  registerModeTabs();
   refreshPreview();
   checkAuthStatus();
   window.addEventListener('focus', checkAuthStatus);
