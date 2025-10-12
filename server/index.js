@@ -38,7 +38,7 @@ app.use(
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-app.use(express.static(path.join(__dirname, '..', 'site')));
+app.use(express.static(path.join(__dirname, '..', 'public')));
 
 function buildOAuthClient(req) {
   const oauth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
@@ -133,22 +133,95 @@ function sanitizeFileName(value) {
     .replace(/\s+/g, '-');
 }
 
-function buildCaptionHtmlBlock(entry) {
-  const safeCaption = (entry.caption || '').replace(/[&<>]/g, (char) => ({
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;'
-  })[char]);
+function escapeHtml(value = '') {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
 
-  return `<article class="entry">
-  <div class="entry__thumbnail">
-    <img src="data:${entry.thumbnailMimeType};base64,${entry.thumbnailBase64}" alt="${safeCaption}" />
-  </div>
-  <div class="entry__body">
-    <h3>${entry.displayName}</h3>
-    <p>${safeCaption}</p>
-  </div>
-</article>`;
+function buildHtmlDocument(metadata, entries) {
+  const coverageTitle = (metadata.coverageTitle || 'Exportación de fotografías').toUpperCase();
+  const metaParts = [];
+  if (metadata.agency) metaParts.push(`Agencia: ${escapeHtml(metadata.agency)}`);
+  if (metadata.photographer) metaParts.push(`Fotógrafo/a: ${escapeHtml(metadata.photographer)}`);
+  if (metadata.editorInitials) metaParts.push(`Editor/a: ${escapeHtml(metadata.editorInitials)}`);
+
+  const entriesHtml = entries
+    .map(
+      (entry) => {
+        const captionHtml = escapeHtml(entry.caption || '').replace(/\n/g, '<br />');
+        return `      <article class="entry">
+        <div class="entry__thumbnail">
+          <img src="data:${entry.thumbnailMimeType};base64,${entry.thumbnailBase64}" alt="${escapeHtml(
+            entry.displayName
+          )}" />
+        </div>
+        <div class="entry__body">
+          <h3>${escapeHtml(entry.displayName)}</h3>
+          <p>${captionHtml}</p>
+        </div>
+      </article>`;
+      }
+    )
+    .join('\n');
+
+  return `<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>${escapeHtml(coverageTitle)}</title>
+    <style>
+      body { font-family: 'Helvetica Neue', Arial, sans-serif; background: #f3f4f6; color: #111827; margin: 0; padding: 2.5rem; }
+      h1 { font-size: 2rem; margin-bottom: 0.5rem; letter-spacing: 0.08em; }
+      .meta { margin-bottom: 2rem; color: #4b5563; }
+      .entries { display: flex; flex-direction: column; gap: 1.5rem; }
+      .entry { background: #ffffff; border-radius: 1rem; display: flex; gap: 1.25rem; padding: 1rem; box-shadow: 0 10px 25px rgba(15, 23, 42, 0.12); }
+      .entry__thumbnail { width: 180px; flex-shrink: 0; }
+      .entry__thumbnail img { width: 100%; border-radius: 0.75rem; object-fit: cover; display: block; }
+      .entry__body { display: flex; flex-direction: column; justify-content: center; gap: 0.75rem; }
+      .entry__body h3 { font-size: 1.1rem; margin: 0; color: #111827; }
+      .entry__body p { margin: 0; line-height: 1.5; white-space: pre-wrap; }
+      footer { margin-top: 2.5rem; color: #6b7280; font-size: 0.9rem; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>${escapeHtml(coverageTitle)}</h1>
+      <div class="meta">${metaParts.length ? metaParts.join(' · ') : '—'}</div>
+    </header>
+    <section class="entries">
+${entriesHtml}
+    </section>
+    <footer>
+      <p>Documento generado automáticamente por el módulo de exportación.</p>
+    </footer>
+  </body>
+</html>`;
+}
+
+function buildTextDocument(metadata, entries) {
+  const coverageTitle = (metadata.coverageTitle || 'Exportación de fotografías').toUpperCase();
+  const header = [
+    coverageTitle,
+    ''.padEnd(coverageTitle.length, '='),
+    metadata.agency ? `Agencia: ${metadata.agency}` : null,
+    metadata.photographer ? `Fotógrafo/a: ${metadata.photographer}` : null,
+    metadata.editorInitials ? `Editor/a: ${metadata.editorInitials}` : null,
+    '',
+    'CAPTIONS'
+  ].filter((line) => line !== null);
+
+  const body = entries
+    .map(
+      (entry, index) =>
+        `${index + 1}. ${entry.displayName || 'Sin título'}\n${entry.caption || ''}`
+    )
+    .join('\n\n');
+
+  return `${header.join('\n')}\n\n${body}\n`;
 }
 
 async function uploadFileToDrive(drive, folderId, fileBuffer, metadata) {
@@ -189,6 +262,17 @@ app.post('/api/export', upload.array('images'), async (req, res, next) => {
     if (metadata.entries.length !== files.length) {
       return res.status(400).json({ error: 'La cantidad de archivos y metadatos no coincide.' });
     }
+
+    const exportOptions = {
+      html: metadata.exportOptions?.html !== false,
+      text: Boolean(metadata.exportOptions?.text)
+    };
+
+    if (!exportOptions.html && !exportOptions.text) {
+      return res.status(400).json({ error: 'Selecciona al menos un formato para exportar.' });
+    }
+
+    metadata.exportOptions = exportOptions;
 
     ensureOAuthConfigured();
     const oauth2Client = buildOAuthClient(req);
@@ -233,50 +317,29 @@ app.post('/api/export', upload.array('images'), async (req, res, next) => {
       });
     }
 
-    const htmlEntries = processedEntries.map((entry) => buildCaptionHtmlBlock(entry)).join('\n\n');
+    const generatedFiles = [];
+    let htmlDocument = null;
+    let textDocument = null;
 
-    const htmlDocument = `<!DOCTYPE html>
-<html lang="es">
-  <head>
-    <meta charset="utf-8" />
-    <title>${metadata.coverageTitle || 'Exportación de fotografías'}</title>
-    <style>
-      body { font-family: 'Helvetica Neue', Arial, sans-serif; background: #f3f4f6; color: #111827; margin: 0; padding: 2.5rem; }
-      h1 { font-size: 2rem; margin-bottom: 1rem; }
-      .meta { margin-bottom: 2rem; color: #4b5563; }
-      .entries { display: flex; flex-direction: column; gap: 1.5rem; }
-      .entry { background: #ffffff; border-radius: 1rem; display: flex; gap: 1.25rem; padding: 1rem; box-shadow: 0 10px 25px rgba(15, 23, 42, 0.12); }
-      .entry__thumbnail { width: 180px; flex-shrink: 0; }
-      .entry__thumbnail img { width: 100%; border-radius: 0.75rem; object-fit: cover; display: block; }
-      .entry__body { display: flex; flex-direction: column; justify-content: center; gap: 0.75rem; }
-      .entry__body h3 { font-size: 1.1rem; margin: 0; color: #111827; }
-      .entry__body p { margin: 0; line-height: 1.5; white-space: pre-wrap; }
-      footer { margin-top: 2.5rem; color: #6b7280; font-size: 0.9rem; }
-    </style>
-  </head>
-  <body>
-    <header>
-      <h1>${metadata.coverageTitle || 'Exportación de fotografías'}</h1>
-      <div class="meta">
-        <p><strong>Agencia:</strong> ${metadata.agency || '—'}</p>
-        <p><strong>Fotógrafo/a:</strong> ${metadata.photographer || '—'}${metadata.editorInitials ? ` · Editor/a: ${metadata.editorInitials}` : ''}</p>
-      </div>
-    </header>
-    <section class="entries">
-      ${htmlEntries}
-    </section>
-    <footer>
-      <p>Documento generado automáticamente por el módulo de exportación.</p>
-    </footer>
-  </body>
-</html>`;
+    if (exportOptions.html) {
+      htmlDocument = buildHtmlDocument(metadata, processedEntries);
+      const htmlFileName = `${folderName}.html`;
+      await uploadFileToDrive(drive, folder.id, Buffer.from(htmlDocument, 'utf8'), {
+        name: htmlFileName,
+        mimeType: 'text/html'
+      });
+      generatedFiles.push(htmlFileName);
+    }
 
-    const exportedFileName = `${folderName}.html`;
-
-    await uploadFileToDrive(drive, folder.id, Buffer.from(htmlDocument, 'utf8'), {
-      name: exportedFileName,
-      mimeType: 'text/html'
-    });
+    if (exportOptions.text) {
+      textDocument = buildTextDocument(metadata, processedEntries);
+      const textFileName = `${folderName}.txt`;
+      await uploadFileToDrive(drive, folder.id, Buffer.from(textDocument, 'utf8'), {
+        name: textFileName,
+        mimeType: 'text/plain'
+      });
+      generatedFiles.push(textFileName);
+    }
 
     await drive.permissions.create({
       fileId: folder.id,
@@ -297,8 +360,10 @@ app.post('/api/export', upload.array('images'), async (req, res, next) => {
       success: true,
       folderId: folder.id,
       shareableLink: folderInfo.webViewLink,
-      exportFileName: exportedFileName,
+      exportFiles: generatedFiles,
+      exportFileName: generatedFiles[0] || null,
       exportHtml: htmlDocument,
+      exportText: textDocument,
       entries: processedEntries
     });
   } catch (error) {

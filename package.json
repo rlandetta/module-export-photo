@@ -1,13 +1,26 @@
 {
-  "dependencies": {
-    "archiver": "^7.0.1",
-    "cd": "^0.3.3",
-    "fs-extra": "^11.3.2",
-    "glob": "^11.0.3"
-  },
+  "name": "module-export-photo",
+  "version": "1.0.0",
+  "description": "Photo export module with caption editor and Google Drive uploader",
+  "main": "server/index.js",
   "scripts": {
-    "bundle:preview": "node scripts/build_preview.mjs",
-    "preview": "python3 -m http.server -d site 5173",
-    "build:preview": "node scripts/build_preview.mjs"
+    "dev": "nodemon server/index.js",
+    "start": "node server/index.js",
+    "test": "echo \"No tests configured\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "express-session": "^1.18.2",
+    "googleapis": "^162.0.0",
+    "multer": "^2.0.2",
+    "sharp": "^0.34.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
   }
 }
