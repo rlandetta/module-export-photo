@@ -585,7 +585,11 @@ async function collectExportEntries() {
 async function buildExportHtml() {
   const entries = await collectExportEntries();
 
-  const coverageTitle = (state.coverageTitle || 'Exportación de fotografías').toUpperCase();
+  const documentTitle = [state.coverageTitle, state.location]
+    .map((value) => (value || '').trim())
+    .filter(Boolean)
+    .join(' · ');
+  const coverageTitle = (documentTitle || 'Exportación de fotografías').toUpperCase();
   const metaParts = [];
   if (state.agency) metaParts.push(`Agencia: ${state.agency}`);
   if (state.photographer) metaParts.push(`Fotógrafo/a: ${state.photographer}`);
@@ -644,7 +648,11 @@ ${entriesHtml}
 
 async function buildExportWordDoc() {
   const included = state.images.filter((image) => image.include);
-  const coverageTitle = (state.coverageTitle || 'Exportación de fotografías').toUpperCase();
+  const documentTitle = [state.coverageTitle, state.location]
+    .map((value) => (value || '').trim())
+    .filter(Boolean)
+    .join(' · ');
+  const coverageTitle = (documentTitle || 'Exportación de fotografías').toUpperCase();
   const segments = state.eventDate ? formatDateSegments(state.eventDate) : { long: '' };
   const headerLines = [
     coverageTitle,

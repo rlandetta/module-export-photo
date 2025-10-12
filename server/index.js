@@ -180,7 +180,11 @@ function buildExportFileBase(metadata) {
 }
 
 function buildHtmlDocument(metadata, entries) {
-  const coverageTitle = (metadata.coverageTitle || 'Exportación de fotografías').toUpperCase();
+  const documentTitle = [metadata.coverageTitle, metadata.location]
+    .map((value) => (value || '').trim())
+    .filter(Boolean)
+    .join(' · ');
+  const coverageTitle = (documentTitle || 'Exportación de fotografías').toUpperCase();
   const metaParts = [];
   if (metadata.agency) metaParts.push(`Agencia: ${escapeHtml(metadata.agency)}`);
   if (metadata.photographer) metaParts.push(`Fotógrafo/a: ${escapeHtml(metadata.photographer)}`);
@@ -242,7 +246,11 @@ ${entriesHtml}
 }
 
 function buildWordDocument(metadata, entries) {
-  const coverageTitle = (metadata.coverageTitle || 'Exportación de fotografías').toUpperCase();
+  const documentTitle = [metadata.coverageTitle, metadata.location]
+    .map((value) => (value || '').trim())
+    .filter(Boolean)
+    .join(' · ');
+  const coverageTitle = (documentTitle || 'Exportación de fotografías').toUpperCase();
   const formattedEventDate = formatEventDate(metadata.eventDate);
   const metaParts = [
     metadata.agency ? `Agencia: ${escapeHtml(metadata.agency)}` : null,
