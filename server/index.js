@@ -167,6 +167,18 @@ function escapeHtml(value = '') {
     .replace(/'/g, '&#39;');
 }
 
+function buildExportFileBase(metadata) {
+  const parts = [metadata.coverageTitle, metadata.location]
+    .map((value) => (value || '').trim())
+    .filter(Boolean);
+  const base = parts.length ? parts.join(' ') : 'Exportacion Fotos';
+  const upper = base
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toUpperCase();
+  return sanitizeFileName(upper);
+}
+
 function buildHtmlDocument(metadata, entries) {
   const coverageTitle = (metadata.coverageTitle || 'Exportación de fotografías').toUpperCase();
   const metaParts = [];
@@ -377,10 +389,11 @@ app.post('/api/export', upload.array('images'), async (req, res, next) => {
     const generatedFiles = [];
     let htmlDocument = null;
     let wordDocument = null;
+    const exportFileBase = buildExportFileBase(metadata);
 
     if (exportOptions.html) {
       htmlDocument = buildHtmlDocument(metadata, processedEntries);
-      const htmlFileName = `${folderName}.html`;
+      const htmlFileName = `${exportFileBase}.html`;
       await uploadFileToDrive(drive, folder.id, Buffer.from(htmlDocument, 'utf8'), {
         name: htmlFileName,
         mimeType: 'text/html'
@@ -390,7 +403,7 @@ app.post('/api/export', upload.array('images'), async (req, res, next) => {
 
     if (exportOptions.word) {
       wordDocument = buildWordDocument(metadata, processedEntries);
-      const wordFileName = `${folderName}.doc`;
+      const wordFileName = `${exportFileBase}.doc`;
       await uploadFileToDrive(drive, folder.id, Buffer.from(wordDocument, 'utf8'), {
         name: wordFileName,
         mimeType: 'application/msword'

@@ -181,10 +181,13 @@ function composeCaption(image) {
     caption = `(${code})`;
   }
 
-  const leadPieces = [];
-  if (location) leadPieces.push(location);
-  if (includeDate && short) leadPieces.push(short);
-  const lead = leadPieces.join(' ');
+  let lead = '';
+  if (location) {
+    lead = location;
+  }
+  if (includeDate && short) {
+    lead = lead ? `${lead}, ${short}` : short;
+  }
   const agencyPart = agency ? `(${agency})` : '';
 
   if (lead || agencyPart) {
@@ -706,6 +709,20 @@ async function buildExportWordDoc() {
 </html>`;
 }
 
+function buildExportFileBase() {
+  const parts = [state.coverageTitle, state.location]
+    .map((value) => (value || '').trim())
+    .filter(Boolean);
+  const base = parts.length ? parts.join(' ') : 'Exportacion Fotos';
+  const normalized = base
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^0-9a-zA-Z\s-]/g, '');
+  const upper = normalized.toUpperCase().trim();
+  const sanitized = upper.replace(/\s+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+  return sanitized || 'EXPORTACION-FOTOS';
+}
+
 function downloadBlob(content, filename, mimeType = 'text/html') {
   const blob = new Blob([content], { type: mimeType });
   const url = URL.createObjectURL(blob);
@@ -730,15 +747,16 @@ async function handleDownload() {
   }
   try {
     setStatus('Generando archivos...', 'info');
+    const baseName = buildExportFileBase();
     if (state.exportOptions.html) {
       const html = await buildExportHtml();
       state.lastExportHtml = html;
-      downloadBlob(html, `${state.coverageTitle || 'exportacion-fotos'}.html`);
+      downloadBlob(html, `${baseName}.html`);
     }
     if (state.exportOptions.word) {
       const word = await buildExportWordDoc();
       state.lastExportWord = word;
-      downloadBlob(word, `${state.coverageTitle || 'exportacion-fotos'}.doc`, 'application/msword');
+      downloadBlob(word, `${baseName}.doc`, 'application/msword');
     }
     setStatus('Descarga completada.');
   } catch (error) {
@@ -1050,13 +1068,13 @@ function registerPreviewActions() {
   dom.downloadExport.addEventListener('click', () => {
     const wantsHtml = state.exportOptions.html;
     const wantsWord = state.exportOptions.word;
-    const title = state.coverageTitle || 'exportacion-fotos';
+    const baseName = buildExportFileBase();
     if (wantsHtml && !wantsWord && state.lastExportHtml) {
-      downloadBlob(state.lastExportHtml, `${title}.html`);
+      downloadBlob(state.lastExportHtml, `${baseName}.html`);
       return;
     }
     if (wantsWord && !wantsHtml && state.lastExportWord) {
-      downloadBlob(state.lastExportWord, `${title}.doc`, 'application/msword');
+      downloadBlob(state.lastExportWord, `${baseName}.doc`, 'application/msword');
       return;
     }
     handleDownload();

@@ -1,4 +1,4 @@
-# Módulo de exportación fotográfica
+# Editor de captions fotográficos
 
 Herramienta web pensada para fotógrafos de prensa y editores gráficos que necesitan generar captions normalizados, previsualizar coberturas y exportar el paquete final (imágenes + documentos) a Google Drive o en archivos locales.
 
