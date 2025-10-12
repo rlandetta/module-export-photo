@@ -28,7 +28,6 @@ const state = {
   lastExportHtml: null,
   lastExportWord: null,
   lastExportLink: null,
-  lastTeraboxLink: null,
   exportOptions: {
     html: true,
     word: false
@@ -68,7 +67,6 @@ const dom = {
   status: document.querySelector('#status'),
   exportResult: document.querySelector('#export-result'),
   exportButton: document.querySelector('#export-button'),
-  exportTerabox: document.querySelector('#export-terabox'),
   downloadExport: document.querySelector('#download-export'),
   loginButton: document.querySelector('#login-button'),
   logoutButton: document.querySelector('#logout-button'),
@@ -132,7 +130,6 @@ function invalidateExports() {
   state.lastExportHtml = null;
   state.lastExportWord = null;
   state.lastExportLink = null;
-  state.lastTeraboxLink = null;
 }
 
 function composeCaption(image) {
@@ -814,78 +811,6 @@ async function handleExport() {
   }
 }
 
-async function handleTeraboxExport() {
-  const included = state.images.filter((image) => image.include);
-  if (!included.length) {
-    setExportResult('Selecciona al menos una imagen para exportar.', 'error');
-    return;
-  }
-  if (!state.exportOptions.html && !state.exportOptions.word) {
-    setExportResult('Elige al menos un formato para exportar.', 'error');
-    return;
-  }
-
-  setExportResult('Exportando a TeraBox...', 'info');
-
-  const formData = new FormData();
-  formData.append(
-    'metadata',
-    JSON.stringify({
-      coverageTitle: state.coverageTitle,
-      captionTemplate: state.captionTemplate,
-      includeDate: state.includeDate,
-      eventDate: state.eventDate,
-      location: state.location,
-      agency: state.agency,
-      photographer: state.photographer,
-      editorInitials: state.editorInitials,
-      captionMode: state.captionMode,
-      exportOptions: state.exportOptions,
-      entries: included.map((image) => ({
-        id: image.id,
-        displayName: image.displayName || image.file.name,
-        caption: image.caption
-      }))
-    })
-  );
-
-  included.forEach((image) => {
-    formData.append('images', image.file, image.file.name);
-  });
-
-  try {
-    const response = await fetch('/api/export-terabox', {
-      method: 'POST',
-      body: formData,
-      credentials: 'include'
-    });
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ error: 'Error desconocido' }));
-      throw new Error(error.error || 'No se pudo exportar a TeraBox.');
-    }
-    const result = await response.json();
-    state.lastExportHtml = result.exportHtml || state.lastExportHtml;
-    state.lastExportWord = result.exportWord || state.lastExportWord;
-    state.lastTeraboxLink = result.shareableLink || null;
-    const formats = [
-      result.exportHtml ? 'HTML' : null,
-      result.exportWord ? 'DOC' : null
-    ]
-      .filter(Boolean)
-      .join(' + ');
-    const formatLabel = formats || 'sin documentos';
-    if (result.shareableLink) {
-      setExportResult(`TeraBox listo (${formatLabel}): ${result.shareableLink}`, 'info');
-    } else if (result.message) {
-      setExportResult(result.message, 'info');
-    } else {
-      setExportResult('TeraBox respondió correctamente, pero no se recibió enlace público.', 'info');
-    }
-  } catch (error) {
-    console.error(error);
-    setExportResult(error.message, 'error');
-  }
-}
 
 function registerGlobalListeners() {
   dom.coverageTitle.addEventListener('input', () => {
@@ -1137,9 +1062,6 @@ function registerPreviewActions() {
     handleDownload();
   });
   dom.exportButton.addEventListener('click', handleExport);
-  if (dom.exportTerabox) {
-    dom.exportTerabox.addEventListener('click', handleTeraboxExport);
-  }
 }
 
 function registerExportOptions() {

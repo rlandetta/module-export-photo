@@ -33,8 +33,6 @@ const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 const REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI || 'http://localhost:5173/oauth2callback';
 const SESSION_SECRET = process.env.SESSION_SECRET || 'module-export-photo-secret';
-const TERABOX_ACCESS_TOKEN = process.env.TERABOX_ACCESS_TOKEN;
-const TERABOX_FOLDER = process.env.TERABOX_FOLDER || '/';
 
 const GOOGLE_SCOPES = [
   'https://www.googleapis.com/auth/drive.file',
@@ -424,75 +422,6 @@ app.post('/api/export', upload.array('images'), async (req, res, next) => {
       exportHtml: htmlDocument,
       exportWord: wordDocument,
       entries: processedEntries
-    });
-  } catch (error) {
-    next(error);
-  }
-});
-
-app.post('/api/export-terabox', upload.array('images'), async (req, res, next) => {
-  try {
-    const metadataRaw = req.body.metadata;
-    if (!metadataRaw) {
-      return res.status(400).json({ error: 'Falta la información de exportación.' });
-    }
-
-    const metadata = JSON.parse(metadataRaw);
-    const files = req.files || [];
-
-    if (!Array.isArray(metadata.entries) || metadata.entries.length === 0) {
-      return res.status(400).json({ error: 'No se recibieron fotos para exportar.' });
-    }
-
-    if (metadata.entries.length !== files.length) {
-      return res.status(400).json({ error: 'La cantidad de archivos y metadatos no coincide.' });
-    }
-
-    const exportOptions = {
-      html: metadata.exportOptions?.html !== false,
-      word: Boolean(metadata.exportOptions?.word)
-    };
-
-    if (!exportOptions.html && !exportOptions.word) {
-      return res.status(400).json({ error: 'Selecciona al menos un formato para exportar.' });
-    }
-
-    const processedEntries = [];
-
-    for (let index = 0; index < files.length; index += 1) {
-      const file = files[index];
-      const entry = metadata.entries[index];
-
-      const thumbnail = await sharp(file.buffer)
-        .resize({ width: 480, height: 320, fit: 'inside' })
-        .jpeg({ quality: 80 })
-        .toBuffer();
-
-      processedEntries.push({
-        ...entry,
-        originalFileName: file.originalname,
-        mimeType: file.mimetype || 'image/jpeg',
-        fileBuffer: file.buffer,
-        thumbnailMimeType: 'image/jpeg',
-        thumbnailBase64: thumbnail.toString('base64')
-      });
-    }
-
-    const htmlDocument = exportOptions.html ? buildHtmlDocument(metadata, processedEntries) : null;
-    const wordDocument = exportOptions.word ? buildWordDocument(metadata, processedEntries) : null;
-
-    if (!TERABOX_ACCESS_TOKEN) {
-      return res.json({
-        success: false,
-        message:
-          'Integración con TeraBox preparada. Configura TERABOX_ACCESS_TOKEN y TERABOX_FOLDER para habilitar la subida automática.',
-        exportHtml: htmlDocument,
-        exportWord: wordDocument
-      });
-    }
-
-    return res.status(501).json({
-      error: 'Subida automática a TeraBox pendiente de implementación. Proporciona las credenciales oficiales para completar esta etapa.'
     });
   } catch (error) {
     next(error);
