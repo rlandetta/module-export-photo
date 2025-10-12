@@ -10,7 +10,7 @@
     <main>
       <header>
         <div>
-          <p class="badge" data-version>Beta v0.7 · Exportador para agencias</p>
+          <p class="badge" data-version>Beta v0.8 · Exportador para agencias</p>
           <h1>Módulo de exportación</h1>
           <p class="auth-state" id="auth-state">Validando sesión...</p>
         </div>
@@ -154,8 +154,8 @@
             <span>Documento HTML</span>
           </label>
           <label class="toggle compact">
-            <input id="option-text" type="checkbox" />
-            <span>Documento de texto (.txt)</span>
+            <input id="option-word" type="checkbox" />
+            <span>Documento Word (.doc)</span>
           </label>
         </div>
         <div id="status" class="status" hidden></div>
@@ -170,6 +170,7 @@
         <div class="actions-row stretch">
           <button id="download-export" type="button" class="secondary">Descargar selección</button>
           <button id="export-button" type="button">Exportar a Google Drive</button>
+          <button id="export-terabox" type="button" class="secondary">Exportar a TeraBox</button>
         </div>
         <div id="export-result" class="status" hidden></div>
       </section>

@@ -26,11 +26,12 @@ const state = {
   images: [],
   activeImageId: null,
   lastExportHtml: null,
-  lastExportText: null,
+  lastExportWord: null,
   lastExportLink: null,
+  lastTeraboxLink: null,
   exportOptions: {
     html: true,
-    text: false
+    word: false
   }
 };
 
@@ -63,10 +64,11 @@ const dom = {
   modeTabs: document.querySelectorAll('.mode-tab'),
   modeHint: document.querySelector('#mode-hint'),
   optionHtml: document.querySelector('#option-html'),
-  optionText: document.querySelector('#option-text'),
+  optionWord: document.querySelector('#option-word'),
   status: document.querySelector('#status'),
   exportResult: document.querySelector('#export-result'),
   exportButton: document.querySelector('#export-button'),
+  exportTerabox: document.querySelector('#export-terabox'),
   downloadExport: document.querySelector('#download-export'),
   loginButton: document.querySelector('#login-button'),
   logoutButton: document.querySelector('#logout-button'),
@@ -128,8 +130,9 @@ function getImageById(id) {
 
 function invalidateExports() {
   state.lastExportHtml = null;
-  state.lastExportText = null;
+  state.lastExportWord = null;
   state.lastExportLink = null;
+  state.lastTeraboxLink = null;
 }
 
 function composeCaption(image) {
@@ -568,15 +571,19 @@ function escapeHtml(value) {
     .replace(/'/g, '&#39;');
 }
 
-async function buildExportHtml() {
+async function collectExportEntries() {
   const included = state.images.filter((image) => image.include);
-  const entries = await Promise.all(
+  return Promise.all(
     included.map(async (image) => ({
       thumbnail: await createThumbnailDataUrl(image.file),
       displayName: image.displayName || image.file.name,
       caption: image.caption
     }))
   );
+}
+
+async function buildExportHtml() {
+  const entries = await collectExportEntries();
 
   const coverageTitle = (state.coverageTitle || 'Exportación de fotografías').toUpperCase();
   const metaParts = [];
@@ -635,7 +642,7 @@ ${entriesHtml}
 </html>`;
 }
 
-function buildExportText() {
+async function buildExportWordDoc() {
   const included = state.images.filter((image) => image.include);
   const coverageTitle = (state.coverageTitle || 'Exportación de fotografías').toUpperCase();
   const segments = state.eventDate ? formatDateSegments(state.eventDate) : { long: '' };
@@ -651,15 +658,55 @@ function buildExportText() {
     ''
   ].filter((line) => line !== null);
 
-  const blocks = [headerLines.join('\n')];
+  const entries = await collectExportEntries();
 
-  included.forEach((image, index) => {
-    const titleLine = `${index + 1}. ${image.displayName || image.file.name}`;
-    const underline = ''.padEnd(Math.max(titleLine.length, 12), '-');
-    blocks.push(`${titleLine}\n${underline}\n${image.caption}`);
-  });
+  const entriesHtml = entries
+    .map(
+      (entry, index) => `      <article class="entry">
+        <div class="entry__index">${index + 1}.</div>
+        <div class="entry__thumbnail"><img src="${entry.thumbnail}" alt="${escapeHtml(
+          entry.displayName
+        )}" /></div>
+        <div class="entry__body">
+          <h3>${escapeHtml(entry.displayName)}</h3>
+          <p>${escapeHtml(entry.caption)}</p>
+        </div>
+      </article>`
+    )
+    .join('\n');
 
-  return `${blocks.join('\n\n')}\n`;
+  const metaLines = [
+    state.agency ? `Agencia: ${escapeHtml(state.agency)}` : null,
+    state.photographer ? `Fotógrafo/a: ${escapeHtml(state.photographer)}` : null,
+    state.editorInitials ? `Editor/a: ${escapeHtml(state.editorInitials)}` : null,
+    segments.long ? `Fecha de cobertura: ${escapeHtml(segments.long)}` : null
+  ]
+    .filter(Boolean)
+    .join('<br />');
+
+  return `<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>${escapeHtml(coverageTitle)}</title>
+    <style>
+      body { font-family: 'Calibri', Arial, sans-serif; color: #111; margin: 0; padding: 40px; }
+      h1 { text-transform: uppercase; letter-spacing: 0.08em; font-size: 26px; margin-bottom: 6px; }
+      .meta { margin-bottom: 20px; color: #444; font-size: 12px; }
+      .entry { display: flex; gap: 12px; margin-bottom: 20px; }
+      .entry__index { font-weight: 700; font-size: 16px; margin-top: 4px; }
+      .entry__thumbnail img { width: 140px; height: auto; border-radius: 6px; }
+      .entry__body { font-size: 13px; line-height: 1.48; }
+      .entry__body h3 { margin: 0 0 6px; font-size: 14px; color: #0f172a; }
+      .entry__body p { margin: 0; white-space: pre-wrap; }
+    </style>
+  </head>
+  <body>
+    <h1>${escapeHtml(coverageTitle)}</h1>
+    <div class="meta">${metaLines || '—'}</div>
+    ${entriesHtml}
+  </body>
+</html>`;
 }
 
 function downloadBlob(content, filename, mimeType = 'text/html') {
@@ -680,7 +727,7 @@ async function handleDownload() {
     setStatus('Selecciona al menos una imagen para exportar.', 'error');
     return;
   }
-  if (!state.exportOptions.html && !state.exportOptions.text) {
+  if (!state.exportOptions.html && !state.exportOptions.word) {
     setStatus('Elige al menos un formato para descargar.', 'error');
     return;
   }
@@ -691,10 +738,10 @@ async function handleDownload() {
       state.lastExportHtml = html;
       downloadBlob(html, `${state.coverageTitle || 'exportacion-fotos'}.html`);
     }
-    if (state.exportOptions.text) {
-      const text = buildExportText();
-      state.lastExportText = text;
-      downloadBlob(text, `${state.coverageTitle || 'exportacion-fotos'}.txt`, 'text/plain;charset=utf-8');
+    if (state.exportOptions.word) {
+      const word = await buildExportWordDoc();
+      state.lastExportWord = word;
+      downloadBlob(word, `${state.coverageTitle || 'exportacion-fotos'}.doc`, 'application/msword');
     }
     setStatus('Descarga completada.');
   } catch (error) {
@@ -709,7 +756,7 @@ async function handleExport() {
     setExportResult('Selecciona al menos una imagen para exportar.', 'error');
     return;
   }
-  if (!state.exportOptions.html && !state.exportOptions.text) {
+  if (!state.exportOptions.html && !state.exportOptions.word) {
     setExportResult('Elige al menos un formato para exportar.', 'error');
     return;
   }
@@ -754,13 +801,86 @@ async function handleExport() {
     }
     const result = await response.json();
     state.lastExportHtml = result.exportHtml || null;
-    state.lastExportText = result.exportText || null;
+    state.lastExportWord = result.exportWord || null;
     state.lastExportLink = result.shareableLink || null;
     const generated = [];
     if (result.exportHtml) generated.push('HTML');
-    if (result.exportText) generated.push('TXT');
+    if (result.exportWord) generated.push('DOC');
     const formats = generated.length ? generated.join(' + ') : 'sin documentos';
     setExportResult(`¡Listo! Carpeta compartida (${formats}): ${result.shareableLink}`, 'info');
+  } catch (error) {
+    console.error(error);
+    setExportResult(error.message, 'error');
+  }
+}
+
+async function handleTeraboxExport() {
+  const included = state.images.filter((image) => image.include);
+  if (!included.length) {
+    setExportResult('Selecciona al menos una imagen para exportar.', 'error');
+    return;
+  }
+  if (!state.exportOptions.html && !state.exportOptions.word) {
+    setExportResult('Elige al menos un formato para exportar.', 'error');
+    return;
+  }
+
+  setExportResult('Exportando a TeraBox...', 'info');
+
+  const formData = new FormData();
+  formData.append(
+    'metadata',
+    JSON.stringify({
+      coverageTitle: state.coverageTitle,
+      captionTemplate: state.captionTemplate,
+      includeDate: state.includeDate,
+      eventDate: state.eventDate,
+      location: state.location,
+      agency: state.agency,
+      photographer: state.photographer,
+      editorInitials: state.editorInitials,
+      captionMode: state.captionMode,
+      exportOptions: state.exportOptions,
+      entries: included.map((image) => ({
+        id: image.id,
+        displayName: image.displayName || image.file.name,
+        caption: image.caption
+      }))
+    })
+  );
+
+  included.forEach((image) => {
+    formData.append('images', image.file, image.file.name);
+  });
+
+  try {
+    const response = await fetch('/api/export-terabox', {
+      method: 'POST',
+      body: formData,
+      credentials: 'include'
+    });
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ error: 'Error desconocido' }));
+      throw new Error(error.error || 'No se pudo exportar a TeraBox.');
+    }
+    const result = await response.json();
+    state.lastExportHtml = result.exportHtml || state.lastExportHtml;
+    state.lastExportWord = result.exportWord || state.lastExportWord;
+    state.lastTeraboxLink = result.shareableLink || null;
+    const formats = [
+      result.exportHtml ? 'HTML' : null,
+      result.exportWord ? 'DOC' : null
+    ]
+      .filter(Boolean)
+      .join(' + ');
+    const formatLabel = formats || 'sin documentos';
+    if (result.shareableLink) {
+      setExportResult(`TeraBox listo (${formatLabel}): ${result.shareableLink}`, 'info');
+    } else if (result.message) {
+      setExportResult(result.message, 'info');
+    } else {
+      setExportResult('TeraBox respondió correctamente, pero no se recibió enlace público.', 'info');
+    }
   } catch (error) {
     console.error(error);
     setExportResult(error.message, 'error');
@@ -1002,16 +1122,32 @@ function registerAuthButtons() {
 }
 
 function registerPreviewActions() {
-  dom.downloadExport.addEventListener('click', handleDownload);
+  dom.downloadExport.addEventListener('click', () => {
+    const wantsHtml = state.exportOptions.html;
+    const wantsWord = state.exportOptions.word;
+    const title = state.coverageTitle || 'exportacion-fotos';
+    if (wantsHtml && !wantsWord && state.lastExportHtml) {
+      downloadBlob(state.lastExportHtml, `${title}.html`);
+      return;
+    }
+    if (wantsWord && !wantsHtml && state.lastExportWord) {
+      downloadBlob(state.lastExportWord, `${title}.doc`, 'application/msword');
+      return;
+    }
+    handleDownload();
+  });
   dom.exportButton.addEventListener('click', handleExport);
+  if (dom.exportTerabox) {
+    dom.exportTerabox.addEventListener('click', handleTeraboxExport);
+  }
 }
 
 function registerExportOptions() {
   dom.optionHtml.addEventListener('change', () => {
     state.exportOptions.html = dom.optionHtml.checked;
   });
-  dom.optionText.addEventListener('change', () => {
-    state.exportOptions.text = dom.optionText.checked;
+  dom.optionWord.addEventListener('change', () => {
+    state.exportOptions.word = dom.optionWord.checked;
   });
 }
 

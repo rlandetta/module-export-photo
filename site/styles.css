@@ -494,7 +494,7 @@ label span {
 }
 
 .actions-row.stretch {
-  justify-content: space-between;
+  justify-content: flex-start;
 }
 
 .export-options {

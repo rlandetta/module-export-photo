@@ -33,6 +33,8 @@ const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 const REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI || 'http://localhost:5173/oauth2callback';
 const SESSION_SECRET = process.env.SESSION_SECRET || 'module-export-photo-secret';
+const TERABOX_ACCESS_TOKEN = process.env.TERABOX_ACCESS_TOKEN;
+const TERABOX_FOLDER = process.env.TERABOX_FOLDER || '/';
 
 const GOOGLE_SCOPES = [
   'https://www.googleapis.com/auth/drive.file',
@@ -229,30 +231,56 @@ ${entriesHtml}
 </html>`;
 }
 
-function buildTextDocument(metadata, entries) {
+function buildWordDocument(metadata, entries) {
   const coverageTitle = (metadata.coverageTitle || 'Exportación de fotografías').toUpperCase();
   const formattedEventDate = formatEventDate(metadata.eventDate);
-  const header = [
-    coverageTitle,
-    ''.padEnd(coverageTitle.length, '='),
-    '',
-    metadata.agency ? `Agencia: ${metadata.agency}` : null,
-    metadata.photographer ? `Fotógrafo/a: ${metadata.photographer}` : null,
-    metadata.editorInitials ? `Editor/a: ${metadata.editorInitials}` : null,
-    formattedEventDate ? `Fecha de cobertura: ${formattedEventDate}` : null,
-    ''.padEnd(coverageTitle.length, '='),
-    ''
-  ].filter((line) => line !== null);
+  const metaParts = [
+    metadata.agency ? `Agencia: ${escapeHtml(metadata.agency)}` : null,
+    metadata.photographer ? `Fotógrafo/a: ${escapeHtml(metadata.photographer)}` : null,
+    metadata.editorInitials ? `Editor/a: ${escapeHtml(metadata.editorInitials)}` : null,
+    formattedEventDate ? `Fecha de cobertura: ${escapeHtml(formattedEventDate)}` : null
+  ]
+    .filter(Boolean)
+    .join('<br />');
 
-  const body = entries
+  const entriesHtml = entries
     .map((entry, index) => {
-      const titleLine = `${index + 1}. ${entry.displayName || 'Sin título'}`;
-      const underline = ''.padEnd(Math.max(titleLine.length, 12), '-');
-      return `${titleLine}\n${underline}\n${entry.caption || ''}`;
+      const captionHtml = escapeHtml(entry.caption || '').replace(/\n/g, '<br />');
+      const thumbnail = `data:${entry.thumbnailMimeType};base64,${entry.thumbnailBase64}`;
+      return `      <article class="entry">
+        <div class="entry__index">${index + 1}.</div>
+        <div class="entry__thumbnail"><img src="${thumbnail}" alt="${escapeHtml(entry.displayName)}" /></div>
+        <div class="entry__body">
+          <h3>${escapeHtml(entry.displayName)}</h3>
+          <p>${captionHtml}</p>
+        </div>
+      </article>`;
     })
-    .join('\n\n');
+    .join('\n');
 
-  return `${header.join('\n')}${body ? `${body}\n` : ''}`;
+  return `<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>${escapeHtml(coverageTitle)}</title>
+    <style>
+      body { font-family: 'Calibri', Arial, sans-serif; color: #111; margin: 0; padding: 40px; }
+      h1 { text-transform: uppercase; letter-spacing: 0.08em; font-size: 26px; margin-bottom: 6px; }
+      .meta { margin-bottom: 20px; color: #444; font-size: 12px; }
+      .entry { display: flex; gap: 12px; margin-bottom: 20px; }
+      .entry__index { font-weight: 700; font-size: 16px; margin-top: 4px; }
+      .entry__thumbnail img { width: 140px; height: auto; border-radius: 6px; }
+      .entry__body { font-size: 13px; line-height: 1.48; }
+      .entry__body h3 { margin: 0 0 6px; font-size: 14px; color: #0f172a; }
+      .entry__body p { margin: 0; white-space: pre-wrap; }
+    </style>
+  </head>
+  <body>
+    <h1>${escapeHtml(coverageTitle)}</h1>
+    <div class="meta">${metaParts || '—'}</div>
+${entriesHtml}
+  </body>
+</html>`;
 }
 
 async function uploadFileToDrive(drive, folderId, fileBuffer, metadata) {
@@ -296,10 +324,10 @@ app.post('/api/export', upload.array('images'), async (req, res, next) => {
 
     const exportOptions = {
       html: metadata.exportOptions?.html !== false,
-      text: Boolean(metadata.exportOptions?.text)
+      word: Boolean(metadata.exportOptions?.word)
     };
 
-    if (!exportOptions.html && !exportOptions.text) {
+    if (!exportOptions.html && !exportOptions.word) {
       return res.status(400).json({ error: 'Selecciona al menos un formato para exportar.' });
     }
 
@@ -350,7 +378,7 @@ app.post('/api/export', upload.array('images'), async (req, res, next) => {
 
     const generatedFiles = [];
     let htmlDocument = null;
-    let textDocument = null;
+    let wordDocument = null;
 
     if (exportOptions.html) {
       htmlDocument = buildHtmlDocument(metadata, processedEntries);
@@ -362,14 +390,14 @@ app.post('/api/export', upload.array('images'), async (req, res, next) => {
       generatedFiles.push(htmlFileName);
     }
 
-    if (exportOptions.text) {
-      textDocument = buildTextDocument(metadata, processedEntries);
-      const textFileName = `${folderName}.txt`;
-      await uploadFileToDrive(drive, folder.id, Buffer.from(textDocument, 'utf8'), {
-        name: textFileName,
-        mimeType: 'text/plain'
+    if (exportOptions.word) {
+      wordDocument = buildWordDocument(metadata, processedEntries);
+      const wordFileName = `${folderName}.doc`;
+      await uploadFileToDrive(drive, folder.id, Buffer.from(wordDocument, 'utf8'), {
+        name: wordFileName,
+        mimeType: 'application/msword'
       });
-      generatedFiles.push(textFileName);
+      generatedFiles.push(wordFileName);
     }
 
     await drive.permissions.create({
@@ -394,8 +422,77 @@ app.post('/api/export', upload.array('images'), async (req, res, next) => {
       exportFiles: generatedFiles,
       exportFileName: generatedFiles[0] || null,
       exportHtml: htmlDocument,
-      exportText: textDocument,
+      exportWord: wordDocument,
       entries: processedEntries
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post('/api/export-terabox', upload.array('images'), async (req, res, next) => {
+  try {
+    const metadataRaw = req.body.metadata;
+    if (!metadataRaw) {
+      return res.status(400).json({ error: 'Falta la información de exportación.' });
+    }
+
+    const metadata = JSON.parse(metadataRaw);
+    const files = req.files || [];
+
+    if (!Array.isArray(metadata.entries) || metadata.entries.length === 0) {
+      return res.status(400).json({ error: 'No se recibieron fotos para exportar.' });
+    }
+
+    if (metadata.entries.length !== files.length) {
+      return res.status(400).json({ error: 'La cantidad de archivos y metadatos no coincide.' });
+    }
+
+    const exportOptions = {
+      html: metadata.exportOptions?.html !== false,
+      word: Boolean(metadata.exportOptions?.word)
+    };
+
+    if (!exportOptions.html && !exportOptions.word) {
+      return res.status(400).json({ error: 'Selecciona al menos un formato para exportar.' });
+    }
+
+    const processedEntries = [];
+
+    for (let index = 0; index < files.length; index += 1) {
+      const file = files[index];
+      const entry = metadata.entries[index];
+
+      const thumbnail = await sharp(file.buffer)
+        .resize({ width: 480, height: 320, fit: 'inside' })
+        .jpeg({ quality: 80 })
+        .toBuffer();
+
+      processedEntries.push({
+        ...entry,
+        originalFileName: file.originalname,
+        mimeType: file.mimetype || 'image/jpeg',
+        fileBuffer: file.buffer,
+        thumbnailMimeType: 'image/jpeg',
+        thumbnailBase64: thumbnail.toString('base64')
+      });
+    }
+
+    const htmlDocument = exportOptions.html ? buildHtmlDocument(metadata, processedEntries) : null;
+    const wordDocument = exportOptions.word ? buildWordDocument(metadata, processedEntries) : null;
+
+    if (!TERABOX_ACCESS_TOKEN) {
+      return res.json({
+        success: false,
+        message:
+          'Integración con TeraBox preparada. Configura TERABOX_ACCESS_TOKEN y TERABOX_FOLDER para habilitar la subida automática.',
+        exportHtml: htmlDocument,
+        exportWord: wordDocument
+      });
+    }
+
+    return res.status(501).json({
+      error: 'Subida automática a TeraBox pendiente de implementación. Proporciona las credenciales oficiales para completar esta etapa.'
     });
   } catch (error) {
     next(error);

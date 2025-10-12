@@ -8,7 +8,7 @@ La interfaz replica el flujo operativo en tres columnas:
 2. **Editor editorial** – define el título de la cobertura, plantillas, fecha, lugar, agencia y créditos. Cada foto hereda la plantilla y puede ajustarse individualmente.
    - `Cobertura del día` genera captions con la fecha del calendario en el formato: `(<YYMMDD>) -- Ciudad DD mes, AAAA (AGENCIA) -- Caption, el DD de mes de AAAA. (AGENCIA/Autor) (Iniciales)`.
    - `Fechas anteriores` emplea el código de fecha del día actual y construye: `(<YYMMDD>) -- Ciudad, (AGENCIA) -- Caption. (AGENCIA/Autor) (Iniciales)`.
-3. **Vista previa y exportación** – revisa miniaturas + captions finales, elige entre generar HTML, TXT o ambos y descarga localmente o envía directo a Google Drive.
+3. **Vista previa y exportación** – revisa miniaturas + captions finales, elige entre generar HTML, DOC o ambos y descarga localmente o envía directo a Google Drive o TeraBox.
 
 ## Requisitos
 
@@ -25,9 +25,14 @@ GOOGLE_CLIENT_ID=tu-client-id
 GOOGLE_CLIENT_SECRET=tu-client-secret
 GOOGLE_REDIRECT_URI=http://localhost:5173/oauth2callback
 SESSION_SECRET=cadena-segura
+# Opcionales (TeraBox)
+TERABOX_ACCESS_TOKEN=token-de-terabox
+TERABOX_FOLDER=/Coberturas
 ```
 
 > El `GOOGLE_REDIRECT_URI` debe coincidir exactamente con el autorizado en Google Cloud. En desarrollo usamos `http://localhost:5173/oauth2callback`.
+>
+> Para TeraBox deberás solicitar las credenciales al proveedor. Mientras no declares `TERABOX_ACCESS_TOKEN`, el módulo devolverá los documentos generados para que los cargues manualmente.
 
 ## Instalación y ejecución
 
@@ -49,20 +54,26 @@ Abre `http://localhost:5173` en tu navegador y sigue este flujo:
 3. Selecciona cada imagen para personalizar el nombre exportado, la descripción principal o el caption final. Puedes alternar entre modo automático/manual, regenerar desde la plantilla o guardar cambios.
 4. En **Vista previa** elige qué formatos generar:
    - `HTML` con miniaturas embebidas en base64.
-   - `TXT` con maqueta similar al HTML (título en mayúsculas, metadatos y sub-bloques numerados).
-5. Usa **Descargar selección** para guardar los documentos en tu equipo (cada formato abre su diálogo de guardado) o autentícate con **Conectar con Google Drive** para subir imágenes + documentos a una carpeta compartida.
+   - `DOC` (Word) con exactamente la misma estructura y estilos que el HTML, listo para enviarse por correo.
+5. Usa **Descargar selección** para guardar los documentos en tu equipo (cada formato abre su diálogo de guardado) o autentícate con **Conectar con Google Drive** o **Exportar a TeraBox** para subir imágenes + documentos a la nube.
 
 ## Exportar a Google Drive
 
 1. Pulsa **Conectar con Google Drive** y completa el flujo OAuth en la ventana emergente.
 2. Una vez autenticado, el estado mostrará “Sesión conectada con Google Drive”.
-3. Selecciona las imágenes (checkbox por tarjeta) y los formatos de exportación (HTML y/o TXT).
+3. Selecciona las imágenes (checkbox por tarjeta) y los formatos de exportación (HTML y/o DOC).
 4. Presiona **Exportar a Google Drive**. El servidor:
    - Crea una carpeta nombrada con la cobertura + fecha.
    - Sube todas las fotos incluidas.
-   - Genera los documentos solicitados (HTML/TXT) con los captions finales.
+   - Genera los documentos solicitados (HTML/DOC) con los captions finales.
    - Ajusta los permisos de la carpeta como “anyone with the link”.
 5. El módulo devuelve el enlace compartible junto con los documentos generados para referencia local.
+
+## Exportar a TeraBox (vista previa)
+
+1. Completa la configuración editorial y marca los formatos a exportar.
+2. Pulsa **Exportar a TeraBox**. Si no existen credenciales en `.env`, el sistema devolverá los documentos generados y un mensaje recordatorio para que completes la integración.
+3. Cuando se disponga de `TERABOX_ACCESS_TOKEN`, se añadirá la subida directa al contenedor definido en `TERABOX_FOLDER`.
 
 ## Vista previa offline
 
@@ -93,9 +104,11 @@ scripts/         # Utilidades de automatización
 - Mantén las credenciales OAuth en variables de entorno; no las subas al repositorio.
 - Las sesiones usan `express-session` con almacenamiento en memoria. Para despliegues multiusuario emplea un store persistente (Redis, Firestore, etc.).
 - Ajusta las políticas de CORS y HTTPS cuando publiques el módulo en producción.
+- Para habilitar la subida a TeraBox deberás declarar `TERABOX_ACCESS_TOKEN` y `TERABOX_FOLDER` en `.env`. Mientras no existan, el módulo devolverá los documentos generados y un mensaje recordatorio para que completes la configuración.
 
 ## Próximos pasos sugeridos
 
 - Añadir exportación a otros proveedores (Terabox, S3) reutilizando la misma estructura de metadatos.
+- Implementar el flujo de autenticación/refresh de TeraBox cuando se disponga de la documentación oficial.
 - Incluir pruebas E2E para validar el flujo completo con API de Google Drive en un entorno controlado.
 - Internacionalizar la interfaz en caso de trabajar con equipos bilingües.
