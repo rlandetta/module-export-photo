@@ -265,7 +265,7 @@ function buildWordDocument(metadata, entries) {
     .map((entry, index) => {
       const captionHtml = escapeHtml(entry.caption || '').replace(/\n/g, '<br />');
       const thumbnail = `data:${entry.thumbnailMimeType};base64,${entry.thumbnailBase64}`;
-      return `      <article class="entry">
+      const itemHtml = `      <article class="entry">
         <div class="entry__index">${index + 1}.</div>
         <div class="entry__thumbnail"><img src="${thumbnail}" alt="${escapeHtml(entry.displayName)}" /></div>
         <div class="entry__body">
@@ -273,6 +273,9 @@ function buildWordDocument(metadata, entries) {
           <p>${captionHtml}</p>
         </div>
       </article>`;
+      const needsPageBreak = (index + 1) % 2 === 0 && index + 1 < entries.length;
+      return needsPageBreak ? `${itemHtml}
+      <div class="page-break"></div>` : itemHtml;
     })
     .join('\n');
 
@@ -291,12 +294,15 @@ function buildWordDocument(metadata, entries) {
       .entry__body { font-size: 13px; line-height: 1.48; }
       .entry__body h3 { margin: 0 0 6px; font-size: 14px; color: #0f172a; }
       .entry__body p { margin: 0; white-space: pre-wrap; }
+      .page-break { page-break-after: always; }
+      .closing { margin-top: 24px; text-align: center; font-weight: 600; letter-spacing: 0.2em; }
     </style>
   </head>
   <body>
     <h1>${escapeHtml(coverageTitle)}</h1>
     <div class="meta">${metaParts || '—'}</div>
 ${entriesHtml}
+    <div class="closing">——— FIN DEL ENVÍO ———</div>
   </body>
 </html>`;
 }
