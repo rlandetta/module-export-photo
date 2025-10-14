@@ -10,7 +10,7 @@
     <main>
       <header>
         <div>
-          <p class="badge" data-version>Beta v1.0 · Editor de captions</p>
+          <p class="badge" data-version>Beta v1.1 · Editor de captions</p>
           <h1>Editor de captions fotográficos</h1>
           <p class="auth-state" id="auth-state">Validando sesión...</p>
         </div>
@@ -88,10 +88,6 @@
               placeholder="Contexto de la foto, actores, acciones, datos de interés..."
             ></textarea>
           </label>
-          <label class="toggle">
-            <input id="include-date" type="checkbox" checked />
-            <span>Incluir la fecha en el caption</span>
-          </label>
           <label>
             <span>Fecha</span>
             <input id="event-date" type="date" />
@@ -158,7 +154,7 @@
             <span>Documento Word (.doc)</span>
           </label>
         </div>
-        <div id="status" class="status" hidden></div>
+       <div id="status" class="status" hidden></div>
         <div class="preview-wrapper">
           <div class="preview-summary" aria-live="polite">
             <h3 id="preview-title"></h3>
@@ -216,6 +212,7 @@
       </article>
     </template>
 
+    <footer class="app-footer">Hecho con ❤️ para fotograf@s. Coding &amp; Design by Ricardo LANDETA</footer>
     <script type="module" src="client.js"></script>
   </body>
 </html>

@@ -16,7 +16,6 @@ const MONTHS = [
 const state = {
   coverageTitle: '',
   captionTemplate: '',
-  includeDate: true,
   eventDate: '',
   location: '',
   agency: '',
@@ -46,12 +45,12 @@ const dom = {
   previewMeta: document.querySelector('#preview-meta'),
   coverageTitle: document.querySelector('#coverage-title'),
   captionTemplate: document.querySelector('#caption-template'),
-  includeDate: document.querySelector('#include-date'),
   eventDate: document.querySelector('#event-date'),
   location: document.querySelector('#location'),
   agency: document.querySelector('#agency'),
   photographer: document.querySelector('#photographer'),
   editorInitials: document.querySelector('#editor-initials'),
+  editorModule: document.querySelector('#editor-module'),
   imageEditor: document.querySelector('#image-editor'),
   editingLabel: document.querySelector('#editing-label'),
   displayName: document.querySelector('#display-name'),
@@ -173,7 +172,7 @@ function composeCaption(image) {
     return caption.replace(/\s+/g, ' ').trim();
   }
 
-  const includeDate = state.includeDate && state.eventDate;
+  const includeDate = state.captionMode === 'same-day' && state.eventDate;
   const { code, short, long } = includeDate ? formatDateSegments(state.eventDate) : { code: '', short: '', long: '' };
 
   let caption = '';
@@ -255,12 +254,8 @@ function refreshModeUI() {
       ? 'Usa esta vista cuando la cobertura se realiza y entrega el mismo día. El formato incorpora el código YYMMDD, la ciudad, la fecha editorial y la agencia antes del caption.'
       : 'Selecciona esta vista cuando la foto se tomó antes del día de hoy. El código inicial usa la fecha actual del sistema y el bloque principal muestra ciudad, agencia y caption, seguido por los créditos editoriales.';
   }
-  const includeContainer = dom.includeDate?.closest('.toggle');
-  if (includeContainer) {
-    includeContainer.classList.toggle('is-disabled', !sameDay);
-  }
-  if (dom.includeDate) {
-    dom.includeDate.disabled = !sameDay;
+  if (dom.editorModule) {
+    dom.editorModule.classList.toggle('mode-previous', !sameDay);
   }
 }
 
@@ -448,7 +443,6 @@ function handleGlobalChange(options = {}) {
 function hydrateStateFromInputs() {
   state.coverageTitle = dom.coverageTitle.value.trim();
   state.captionTemplate = dom.captionTemplate.value;
-  state.includeDate = dom.includeDate.checked;
   state.eventDate = dom.eventDate.value;
   state.location = dom.location.value.trim();
   state.agency = dom.agency.value.trim();
@@ -791,7 +785,6 @@ async function handleExport() {
     JSON.stringify({
       coverageTitle: state.coverageTitle,
       captionTemplate: state.captionTemplate,
-      includeDate: state.includeDate,
       eventDate: state.eventDate,
       location: state.location,
       agency: state.agency,
@@ -860,10 +853,6 @@ function registerGlobalListeners() {
     });
   });
 
-  dom.includeDate.addEventListener('change', () => {
-    hydrateStateFromInputs();
-    handleGlobalChange();
-  });
 }
 
 function registerModeTabs() {

@@ -154,6 +154,17 @@ header .auth-actions {
   grid-column: 2 / 3;
 }
 
+#editor-module.mode-previous {
+  background: #f9f3eb;
+  border-color: #e9d9c7;
+  box-shadow: 0 25px 60px rgba(156, 117, 72, 0.12);
+}
+
+#editor-module.mode-previous .module-header h2,
+#editor-module.mode-previous .module-header .description {
+  color: #704c25;
+}
+
 #preview-module {
   grid-column: 3 / 4;
   position: sticky;
@@ -551,6 +562,15 @@ label span {
   background: rgba(210, 60, 60, 0.2);
 }
 
+.app-footer {
+  margin: 3rem auto 1.5rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  width: min(100%, 1380px);
+  padding: 0 1.5rem;
+}
+
 @media (max-width: 1100px) {
   main {
     grid-template-columns: repeat(2, minmax(280px, 1fr));
@@ -593,5 +613,36 @@ label span {
   #editor-module,
   #preview-module {
     position: static;
+  }
+}
+
+@media (max-width: 540px) {
+  header {
+    gap: 1.5rem;
+  }
+
+  header .auth-actions {
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: flex-start;
+    gap: 0.5rem;
+  }
+
+  .module {
+    padding: 1.25rem;
+  }
+
+  .drop-zone {
+    padding: 1.75rem 1.25rem;
+  }
+
+  .actions-row {
+    justify-content: flex-start;
+  }
+
+  button,
+  .button {
+    width: 100%;
+    justify-content: center;
   }
 }
