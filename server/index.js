@@ -239,7 +239,7 @@ function buildHtmlDocument(metadata, entries) {
 ${entriesHtml}
     </section>
     <footer>
-      <p>Documento generado automáticamente por el módulo de exportación.</p>
+      <p>Documento generado automáticamente por el editor de captions fotográficos.</p>
     </footer>
   </body>
 </html>`;
@@ -302,7 +302,7 @@ function buildWordDocument(metadata, entries) {
     <h1>${escapeHtml(coverageTitle)}</h1>
     <div class="meta">${metaParts || '—'}</div>
 ${entriesHtml}
-    <div class="closing">——— FIN DEL ENVÍO ———</div>
+    <div class="closing">&nbsp;&nbsp;——— FIN DEL ENVÍO ———</div>
   </body>
 </html>`;
 }

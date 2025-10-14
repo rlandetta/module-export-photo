@@ -318,7 +318,6 @@ function refreshImageList() {
     const meta = node.querySelector('[data-role="meta"]');
     const include = node.querySelector('[data-role="include"]');
     const edit = node.querySelector('[data-role="edit"]');
-    const save = node.querySelector('[data-role="save"]');
     const remove = node.querySelector('[data-role="remove"]');
 
     article.dataset.dirty = image.isDirty ? 'true' : 'false';
@@ -336,13 +335,6 @@ function refreshImageList() {
 
     edit.addEventListener('click', () => {
       setActiveImage(image.id);
-    });
-
-    save.addEventListener('click', () => {
-      setActiveImage(image.id);
-      persistActiveImage();
-      refreshImageList();
-      refreshPreview();
     });
 
     remove.addEventListener('click', () => {
@@ -629,6 +621,7 @@ async function buildExportHtml() {
       .entry__body h3 { font-size: 1.1rem; margin: 0; color: #111827; }
       .entry__body p { margin: 0; line-height: 1.5; white-space: pre-wrap; }
       footer { margin-top: 2.5rem; color: #6b7280; font-size: 0.9rem; }
+      .closing { margin-top: 0.75rem; text-align: center; font-weight: 600; letter-spacing: 0.2em; }
     </style>
   </head>
   <body>
@@ -641,7 +634,7 @@ async function buildExportHtml() {
     </section>
     <footer>
       <p>Documento generado automáticamente por el editor de captions fotográficos.</p>
-      <p class="closing">——— FIN DEL ENVÍO ———</p>
+      <p class="closing">&nbsp;&nbsp;——— FIN DEL ENVÍO ———</p>
     </footer>
   </body>
 </html>`;
@@ -718,7 +711,7 @@ async function buildExportWordDoc() {
     <h1>${escapeHtml(coverageTitle)}</h1>
     <div class="meta">${metaLines || '—'}</div>
     ${groupedHtml}
-    <footer class="closing">——— FIN DEL ENVÍO ———</footer>
+    <footer class="closing">&nbsp;&nbsp;——— FIN DEL ENVÍO ———</footer>
   </body>
 </html>`;
 }

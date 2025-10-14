@@ -318,7 +318,6 @@ function refreshImageList() {
     const meta = node.querySelector('[data-role="meta"]');
     const include = node.querySelector('[data-role="include"]');
     const edit = node.querySelector('[data-role="edit"]');
-    const save = node.querySelector('[data-role="save"]');
     const remove = node.querySelector('[data-role="remove"]');
 
     article.dataset.dirty = image.isDirty ? 'true' : 'false';
@@ -336,13 +335,6 @@ function refreshImageList() {
 
     edit.addEventListener('click', () => {
       setActiveImage(image.id);
-    });
-
-    save.addEventListener('click', () => {
-      setActiveImage(image.id);
-      persistActiveImage();
-      refreshImageList();
-      refreshPreview();
     });
 
     remove.addEventListener('click', () => {
@@ -585,7 +577,11 @@ async function collectExportEntries() {
 async function buildExportHtml() {
   const entries = await collectExportEntries();
 
-  const coverageTitle = (state.coverageTitle || 'Exportación de fotografías').toUpperCase();
+  const documentTitle = [state.coverageTitle, state.location]
+    .map((value) => (value || '').trim())
+    .filter(Boolean)
+    .join(' · ');
+  const coverageTitle = (documentTitle || 'Exportación de fotografías').toUpperCase();
   const metaParts = [];
   if (state.agency) metaParts.push(`Agencia: ${state.agency}`);
   if (state.photographer) metaParts.push(`Fotógrafo/a: ${state.photographer}`);
@@ -625,6 +621,7 @@ async function buildExportHtml() {
       .entry__body h3 { font-size: 1.1rem; margin: 0; color: #111827; }
       .entry__body p { margin: 0; line-height: 1.5; white-space: pre-wrap; }
       footer { margin-top: 2.5rem; color: #6b7280; font-size: 0.9rem; }
+      .closing { margin-top: 0.75rem; text-align: center; font-weight: 600; letter-spacing: 0.2em; }
     </style>
   </head>
   <body>
@@ -633,10 +630,11 @@ async function buildExportHtml() {
       <div class="meta">${headerMeta || '—'}</div>
     </header>
     <section class="entries">
-${entriesHtml}
+    ${entriesHtml}
     </section>
     <footer>
-      <p>Documento generado automáticamente por el módulo de exportación.</p>
+      <p>Documento generado automáticamente por el editor de captions fotográficos.</p>
+      <p class="closing">&nbsp;&nbsp;——— FIN DEL ENVÍO ———</p>
     </footer>
   </body>
 </html>`;
@@ -644,7 +642,11 @@ ${entriesHtml}
 
 async function buildExportWordDoc() {
   const included = state.images.filter((image) => image.include);
-  const coverageTitle = (state.coverageTitle || 'Exportación de fotografías').toUpperCase();
+  const documentTitle = [state.coverageTitle, state.location]
+    .map((value) => (value || '').trim())
+    .filter(Boolean)
+    .join(' · ');
+  const coverageTitle = (documentTitle || 'Exportación de fotografías').toUpperCase();
   const segments = state.eventDate ? formatDateSegments(state.eventDate) : { long: '' };
   const headerLines = [
     coverageTitle,
@@ -660,19 +662,21 @@ async function buildExportWordDoc() {
 
   const entries = await collectExportEntries();
 
-  const entriesHtml = entries
-    .map(
-      (entry, index) => `      <article class="entry">
+  const groupedHtml = entries
+    .map((entry, index) => {
+      const itemHtml = `      <article class="entry">
         <div class="entry__index">${index + 1}.</div>
-        <div class="entry__thumbnail"><img src="${entry.thumbnail}" alt="${escapeHtml(
-          entry.displayName
-        )}" /></div>
+        <div class="entry__thumbnail"><img src="${entry.thumbnail}" alt="${escapeHtml(entry.displayName)}" /></div>
         <div class="entry__body">
           <h3>${escapeHtml(entry.displayName)}</h3>
           <p>${escapeHtml(entry.caption)}</p>
         </div>
-      </article>`
-    )
+      </article>`;
+
+      const needsPageBreak = (index + 1) % 2 === 0 && index + 1 < entries.length;
+      return needsPageBreak ? `${itemHtml}
+      <div class="page-break"></div>` : itemHtml;
+    })
     .join('\n');
 
   const metaLines = [
@@ -699,12 +703,15 @@ async function buildExportWordDoc() {
       .entry__body { font-size: 13px; line-height: 1.48; }
       .entry__body h3 { margin: 0 0 6px; font-size: 14px; color: #0f172a; }
       .entry__body p { margin: 0; white-space: pre-wrap; }
+      .page-break { page-break-after: always; }
+      .closing { margin-top: 24px; text-align: center; font-weight: 600; letter-spacing: 0.2em; }
     </style>
   </head>
   <body>
     <h1>${escapeHtml(coverageTitle)}</h1>
     <div class="meta">${metaLines || '—'}</div>
-    ${entriesHtml}
+    ${groupedHtml}
+    <footer class="closing">&nbsp;&nbsp;——— FIN DEL ENVÍO ———</footer>
   </body>
 </html>`;
 }
