@@ -302,7 +302,7 @@ function buildWordDocument(metadata, entries) {
     <h1>${escapeHtml(coverageTitle)}</h1>
     <div class="meta">${metaParts || '—'}</div>
 ${entriesHtml}
-    <div class="closing">&nbsp;&nbsp;——— FIN DEL ENVÍO ———</div>
+    <div class="closing"><br /><br /><br />«------  FIN DEL ENVIO  ------»</div>
   </body>
 </html>`;
 }

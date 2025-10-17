@@ -628,7 +628,7 @@ async function buildExportHtml() {
     </section>
     <footer>
       <p>Documento generado automáticamente por el editor de captions fotográficos.</p>
-      <p class="closing">&nbsp;&nbsp;——— FIN DEL ENVÍO ———</p>
+      <div class="closing"><br /><br /><br />«------  FIN DEL ENVIO  ------»</div>
     </footer>
   </body>
 </html>`;
@@ -705,7 +705,7 @@ async function buildExportWordDoc() {
     <h1>${escapeHtml(coverageTitle)}</h1>
     <div class="meta">${metaLines || '—'}</div>
     ${groupedHtml}
-    <footer class="closing">&nbsp;&nbsp;——— FIN DEL ENVÍO ———</footer>
+    <div class="closing"><br /><br /><br />«------  FIN DEL ENVIO  ------»</div>
   </body>
 </html>`;
 }
