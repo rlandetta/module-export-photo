@@ -173,31 +173,33 @@
 
     <template id="image-card-template">
       <article class="image-card" data-dirty="false">
-        <img alt="Preview" loading="lazy" />
-        <div class="info">
+        <div class="media">
           <strong data-role="name"></strong>
-          <span data-role="meta"></span>
-          <label class="toggle compact">
+          <img alt="Preview" loading="lazy" />
+          <label class="toggle compact media-toggle">
             <input type="checkbox" data-role="include" checked />
             <span>Incluir en exportación</span>
           </label>
         </div>
-        <div class="actions" role="group" aria-label="Acciones de la imagen">
-          <button type="button" class="icon-button" data-role="edit" aria-label="Editar caption">
-            <svg viewBox="0 0 20 20" aria-hidden="true">
-              <path
-                d="M12.586 3.586a2 2 0 0 1 2.828 2.828l-7.95 7.95-3.464.636.636-3.464 7.95-7.95Z"
-              />
-              <path d="M5 17h10" stroke-linecap="round" stroke-width="1.4" />
-            </svg>
-          </button>
-          <button type="button" class="icon-button danger" data-role="remove" aria-label="Eliminar imagen">
-            <svg viewBox="0 0 20 20" aria-hidden="true">
-              <path d="M4 6h12" stroke-width="1.8" stroke-linecap="round" />
-              <path d="M7 6v8a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1V6" />
-              <path d="M8 6V4h4v2" />
-            </svg>
-          </button>
+        <div class="details">
+          <span data-role="meta"></span>
+          <div class="actions" role="group" aria-label="Acciones de la imagen">
+            <button type="button" class="icon-button" data-role="edit" aria-label="Editar caption">
+              <svg viewBox="0 0 20 20" aria-hidden="true">
+                <path
+                  d="M12.586 3.586a2 2 0 0 1 2.828 2.828l-7.95 7.95-3.464.636.636-3.464 7.95-7.95Z"
+                />
+                <path d="M5 17h10" stroke-linecap="round" stroke-width="1.4" />
+              </svg>
+            </button>
+            <button type="button" class="icon-button danger" data-role="remove" aria-label="Eliminar imagen">
+              <svg viewBox="0 0 20 20" aria-hidden="true">
+                <path d="M4 6h12" stroke-width="1.8" stroke-linecap="round" />
+                <path d="M7 6v8a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1V6" />
+                <path d="M8 6V4h4v2" />
+              </svg>
+            </button>
+          </div>
         </div>
       </article>
     </template>
