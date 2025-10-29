@@ -630,34 +630,3 @@ label span {
     position: static;
   }
 }
-
-@media (max-width: 540px) {
-  header {
-    gap: 1.5rem;
-  }
-
-  header .auth-actions {
-    flex-wrap: wrap;
-    width: 100%;
-    justify-content: flex-start;
-    gap: 0.5rem;
-  }
-
-  .module {
-    padding: 1.25rem;
-  }
-
-  .drop-zone {
-    padding: 1.75rem 1.25rem;
-  }
-
-  .actions-row {
-    justify-content: flex-start;
-  }
-
-  button,
-  .button {
-    width: 100%;
-    justify-content: center;
-  }
-}

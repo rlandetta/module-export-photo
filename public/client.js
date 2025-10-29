@@ -999,12 +999,14 @@ function registerDropZone() {
   });
 
   dom.dropZone.addEventListener('click', () => {
+    dom.fileInput.value = '';
     dom.fileInput.click();
   });
 
   dom.dropZone.addEventListener('keydown', (event) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
+      dom.fileInput.value = '';
       dom.fileInput.click();
     }
   });
